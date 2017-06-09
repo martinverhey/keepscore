@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Add a Match
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+<ion-row>
+  <ion-col text-center>
+    <h2>Select Competitor(s)</h2>
+  </ion-col>
+</ion-row>
+<form (ngSubmit)="saveForm()" #matchForm="ngForm">
+<ion-row>
+  <ion-col>
+    <ion-item class="team1">
+      <h2>Team 1</h2>
+    </ion-item>
+    <ion-item *ngFor="let player of players | orderBy : ['username']">
+      <ion-label>{{player.username}}</ion-label>
+      <ion-checkbox [(ngModel)]="player.checkedTeam1" name="{{player.username}}" required></ion-checkbox>
+    </ion-item>
+  </ion-col>
+  <ion-col>
+    <ion-item class="team2">
+      <h2>Team 2</h2>
+    </ion-item>
+    <ion-item *ngFor="let player of players | orderBy : ['username']">
+      <ion-label>{{player.username}}</ion-label>
+      <ion-checkbox [(ngModel)]="player.checkedTeam2" name="{{player.username}}" required></ion-checkbox>
+    </ion-item>
+  </ion-col>
+</ion-row>
+<ion-row>
+  <ion-col text-center>
+    <h2>Enter Result</h2>
+  </ion-col>
+</ion-row>
+<ion-row>
+  <ion-col>
+    <ion-item>
+      <ion-input type="tel" placeholder="Score Team 1" required [(ngModel)]="score1" name="score1"></ion-input>
+    </ion-item>
+  </ion-col>
+  <ion-col>
+    <ion-item>
+      <ion-input type="tel" placeholder="Score Team 2" required [(ngModel)]="score2" name="score2"></ion-input>
+    </ion-item>
+  </ion-col>
+</ion-row>
+<ion-row>
+  <ion-col text-center>
+    <button ion-button round type="submit" [disabled]="!matchForm.form.valid">Save Match</button>
+  </ion-col>
+</ion-row>
+</form>
+
+</ion-content>
