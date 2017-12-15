@@ -1,0 +1,42 @@
+page-results {
+  ion-card {
+    height: 75px;
+  }
+  
+  .gainColor {
+    color: #46b383;
+  }
+
+  .loseColor {
+    color: #b34646;
+  }
+
+  .noChangeColor {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  ion-col {
+  padding: 5px 0px;
+  }
+
+  // .virtual-scroll > .virtual-position:first-child {
+  //   transform: translate3d(0px, 0px, 0px) !important;
+  // }
+
+  // .virtual-scroll .virtual-position, .virtual-scroll .virtual-position.item {
+    // nothing yet, but maybe this can help for the positioning. Maybe also with :first-child, as in the one above.
+  // }
+
+ ion-col[width-12] {
+    -webkit-flex: 0 0 12%;
+    -ms-flex: 0 0 12%;
+    flex: 0 0 12%;
+    max-width: 12%;
+  }
+
+  p {
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+}

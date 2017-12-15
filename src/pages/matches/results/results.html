@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Results</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only color="light" (click)="pushPage()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-item-group text-center [virtualScroll]="matches | orderBy : ['-created_at']" [headerFn]="myHeaderFn" [virtualTrackBy]="virtualTrack" [approxItemHeight]="'75px'">
+    <ion-item-divider sticky text-center *virtualHeader="let header">
+      {{header}}
+    </ion-item-divider>
+    <ion-card *virtualItem="let match">
+      <ion-card-content>
+        <ion-row>
+          <ion-col text-right center width-12 [ngClass]="(match.points.team1 > 0) ? 'gainColor' : (match.points.team1 < 0) ? 'loseColor' : 'noChangeColor'">
+            <span *ngIf="match.points.team1 > 0" text-right>▲ {{match.points.team1Positive}}</span><span *ngIf="match.points.team1 < 0" text-right>▼ {{match.points.team1Positive}}</span><span *ngIf="match.points.team1 === 0" text-right>{{match.points.team1Positive}}</span>
+          </ion-col>
+          <ion-col text-right center width-20>
+            <span *ngFor="let player of match.teams.team1" [class.selected]="user.key === player.id"><p>{{player.username}}</p> </span>
+          </ion-col>
+          <ion-col text-center center>
+            <h1>{{match.scores.team1}} - {{match.scores.team2}}</h1>
+          </ion-col>
+          <ion-col text-left center width-20>
+            <span *ngFor="let player of match.teams.team2" [class.selected]="user.key === player.id"><p>{{player.username}}</p> </span>
+          </ion-col>
+          <ion-col text-left center width-12 [ngClass]="(match.points.team2 > 0) ? 'gainColor' : (match.points.team2 < 0) ? 'loseColor' : 'noChangeColor'">
+            <span *ngIf="match.points.team2 > 0" text-left>▲ {{match.points.team2Positive}}</span><span *ngIf="match.points.team2 < 0" text-left>▼ {{match.points.team2Positive}}</span><span *ngIf="match.points.team2 === 0" text-left>{{match.points.team2Positive}}</span>
+          </ion-col>
+        </ion-row>
+      </ion-card-content>
+    </ion-card>
+  </ion-item-group>
+
+</ion-content>

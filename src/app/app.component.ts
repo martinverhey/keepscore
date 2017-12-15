@@ -1,28 +1,46 @@
 import { Component } from '@angular/core';
 import { Platform } from 'ionic-angular';
-import { StatusBar, Splashscreen } from 'ionic-native';
-import { TabsPage } from '../pages/tabs/tabs';
+import { StatusBar } from '@ionic-native/status-bar';
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireAuth } from 'angularfire2/auth';
 
-// Operators
-import 'rxjs/add/operator/catch';
-// import 'rxjs/add/operator/debounceTime';
-// import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/map';
-// import 'rxjs/add/operator/switchMap';
-// import 'rxjs/add/operator/toPromise';
+import { UsernamePage } from "../pages/username/username";
+import { SelectCompetitionPage } from "../pages/competition/select-competition/select-competition";
+import { ApiService } from '../providers/api-service';
 
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage = TabsPage;
+  rootPage: any;
 
-  constructor(platform: Platform) {
+  constructor(platform: Platform, 
+              private afModule: AngularFireModule,
+              private afAuth: AngularFireAuth, 
+              private apiService: ApiService,
+              private splashScreen: SplashScreen,
+              private statusBar: StatusBar
+            ) {
+    this.afAuth.authState.subscribe(auth => {
+      // console.log(auth);
+      if (!auth) {
+        this.rootPage = UsernamePage;
+      } else {
+        this.apiService.player.uid = auth.uid;
+        this.rootPage = SelectCompetitionPage;
+      }
+    })
+
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
-      StatusBar.styleDefault();
-      Splashscreen.hide();
+      statusBar.styleDefault();
+      splashScreen.hide();
+
+      // window.fabric.Crashlytics.addLog("about to send a crash for testing!");
+      // window.fabric.Crashlytics.sendCrash();
+      
     });
   }
 }

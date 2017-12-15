@@ -1,0 +1,32 @@
+<!--
+  Generated template for the Profile page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-nav [root]="rootPage"></ion-nav>
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Profile</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  <ion-card (click)="pushPage()">
+      <ion-item>
+        <ion-icon name="trophy" item-left large></ion-icon>
+        <ion-row>
+          <ion-col>
+            <h2>Competitions</h2>
+            <p><i>{{ amountOfCompetitions }} total</i></p>
+          </ion-col>
+          <!-- <ion-col text-center center>
+          </ion-col> -->
+        </ion-row>
+        <ion-icon name="arrow-forward" item-right class="selected" large></ion-icon>
+      </ion-item>
+    </ion-card>    
+</ion-content>

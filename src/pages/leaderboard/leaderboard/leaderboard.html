@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only color="light" (click)="pushModal()">
+        <ion-icon name="information"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>Leaderboard</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only color="light" (click)="pushPage()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+
+  <ion-list>
+    <ion-item *ngFor="let player of players; let i = index" style="vertical-align-content">
+      <ion-row [class.selected]="user.uid === player.key">
+        <ion-col text-left center col-1>
+          <ion-icon name="trophy" item-left *ngIf="i == 0" [style.color]="firstPlace"></ion-icon>
+          <ion-icon name="trophy" item-left *ngIf="i == 1" [style.color]="secondPlace"></ion-icon>
+          <ion-icon name="trophy" item-left *ngIf="i == 2" [style.color]="thirdPlace"></ion-icon>
+          <ion-icon name="trophy" item-left *ngIf="i > 2" [style.color]="otherPlaces"></ion-icon>
+        </ion-col>
+        <ion-col center col-2>
+          {{i + 1}}.
+        </ion-col>
+        <ion-col center col-7 class="overflow-hidden">
+          {{player.username}}
+        </ion-col>
+        <ion-col text-right center col-2>
+           {{player.rank}}
+        </ion-col>
+      </ion-row>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

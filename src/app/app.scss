@@ -66,3 +66,7 @@ ion-item-divider[sticky] {
 .checkbox .checkbox-checked {
     background-color: color($colors, primary);
 }
+
+.selected, .selected p {
+    color: color($colors, primary);
+}

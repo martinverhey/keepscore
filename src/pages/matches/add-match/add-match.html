@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Add a Match
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+<ion-row>
+  <ion-col text-center>
+    <h2>Select Player(s)</h2>
+  </ion-col>
+</ion-row>
+<form (ngSubmit)="saveForm()" #matchForm="ngForm">
+<ion-row>
+  <ion-col>
+    <ion-item class="team1">
+      <h2>Team 1</h2>
+    </ion-item>
+    <ion-item>
+      <ion-input #input placeholder="Player 1 *" required [(ngModel)]="player1" name="player1" [disabled]="true" (click)="selectPlayerModal('player1')"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input #input placeholder="Player 3" [(ngModel)]="player3" name="player3" [disabled]="true" (click)="selectPlayerModal('player3')"></ion-input>
+    </ion-item>
+  </ion-col>
+  <ion-col>
+    <ion-item class="team2">
+      <h2>Team 2</h2>
+    </ion-item>
+    <ion-item>
+      <ion-input #input placeholder="Player 2 *" required [(ngModel)]="player2" name="player2" [disabled]="true" (click)="selectPlayerModal('player2')"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input #input placeholder="Player 4" [(ngModel)]="player4" name="player4" [disabled]="true" (click)="selectPlayerModal('player4')"></ion-input>
+    </ion-item>
+  </ion-col>
+</ion-row>
+<ion-row>
+  <ion-col text-center>
+    <h2>Enter Result</h2>
+  </ion-col>
+</ion-row>
+<ion-row>
+  <ion-col>
+    <ion-item>
+      <ion-input type="tel" pattern="^(0|[1-9][0-9]{0,1})$" placeholder="Score Team 1 *" required [(ngModel)]="score1" name="score1"></ion-input>
+    </ion-item>
+  </ion-col>
+  <ion-col>
+    <ion-item>
+      <ion-input type="tel" pattern="^(0|[1-9][0-9]{0,1})$" placeholder="Score Team 2 *" required [(ngModel)]="score2" name="score2"></ion-input>
+    </ion-item>
+  </ion-col>
+</ion-row>
+<ion-row>
+  <ion-col text-center>
+    <button ion-button round type="submit" [disabled]="!matchForm.form.valid || !this.player1 || !this.player2">Save Match</button>
+  </ion-col>
+</ion-row>
+</form>
+
+</ion-content>
