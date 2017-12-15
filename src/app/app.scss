@@ -1,0 +1,68 @@
+// http://ionicframework.com/docs/v2/theming/
+
+
+// App Global Sass
+// --------------------------------------------------
+// Put style rules here that you want to apply globally. These
+// styles are for the entire app and not just one component.
+// Additionally, this file can be also used as an entry point
+// to import other Sass files to be included in the output CSS.
+//
+// Shared Sass variables, which can be used to adjust Ionic's
+// default Sass variables, belong in "theme/variables.scss".
+//
+// To declare rules for a specific mode, create a child rule
+// for the .md, .ios, or .wp mode classes. The mode class is
+// automatically applied to the <body> element in the app.
+
+ion-item-divider[sticky] {
+    background-color: color($colors, primary);
+    color: color($colors, light);
+}
+
+// Top bar
+.toolbar-title {
+    color: color($colors, light);
+    font-weight: 400;
+}
+
+.toolbar-background {
+    background-color: color($colors, primary);
+}
+
+// Header
+.header .toolbar-background, .footer .toolbar-background {
+    border-color: color($colors, light);
+}
+
+// Bottom bar?
+.bar-button-default, .bar-button-default.bar-button-default, .bar-button-clear-default {
+    color: color($colors, light);
+}
+
+.tabs .tab-button[aria-selected=true] .tab-button-icon {
+    color: color($colors, light);
+}
+
+.tabs .tabbar {
+    border-top: 0.55px solid rgba(255, 255, 255, 0.3);
+    background-color: color($colors, primary);
+}
+
+.tabs .tab-button-icon {
+    color: color($colors, light);
+}
+
+.tabs .tab-button {
+    color: color($colors, light);
+}
+
+.tabs .tab-button:hover:not(.disable-hover), .tabs .tab-button[aria-selected=true] {
+    color: color($colors, light);
+    font-weight: bold;
+}
+
+// Other
+.checkbox .checkbox-checked {
+    background-color: color($colors, primary);
+}

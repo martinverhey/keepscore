@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Players</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only color="light" (click)="pushPage()">
+        <ion-icon name="person-add"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-item-group>
+    <ion-item *ngFor="let player of players | orderBy : ['username']" style="vertical-align-content">
+      <ion-row>
+        <ion-col center>
+          {{player.username}}
+        </ion-col>
+      </ion-row>
+    </ion-item>
+  </ion-item-group>
+
+</ion-content>
