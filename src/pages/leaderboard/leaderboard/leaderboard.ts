@@ -1,9 +1,7 @@
 import { Subscription } from 'rxjs/Rx';
 import { Component, OnInit } from '@angular/core';
 import { Loading, LoadingController, NavController, ModalController } from 'ionic-angular';
-import { DataService } from '../../../providers/data-service';
 import { ApiService } from '../../../providers/api-service';
-import { LoginPage } from '../../login/login';
 import { AddMatchPage } from '../../matches/add-match/add-match';
 import { LeaderboardInfoPage } from '../leaderboard-info/leaderboard-info';
 
@@ -12,14 +10,13 @@ import { LeaderboardInfoPage } from '../leaderboard-info/leaderboard-info';
   templateUrl: 'leaderboard.html'
 })
 export class LeaderboardPage implements OnInit {
-  private currentUserID;
   private userSub: Subscription;
   private user: any;
   private players: any[];
-  private firstPlace = "#C98910";
-  private secondPlace = "#A8A8A8";
-  private thirdPlace = "#965A38";
-  private otherPlaces = "rgba(0,0,0,.1)"
+  public firstPlace = "#C98910";
+  public secondPlace = "#A8A8A8";
+  public thirdPlace = "#965A38";
+  public otherPlaces = "rgba(0,0,0,.1)"
   private loader: Loading;
   private users: any;
 

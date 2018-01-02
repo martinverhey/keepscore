@@ -1,56 +1,92 @@
-import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angularfire2/database';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
+import { AngularFireDatabase } from 'angularfire2/database';
 import firebase from 'firebase';
 import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+import { IPlayer } from '../models/player.models';
 
 @Injectable()
-export class ApiService {
-  public player: {
-    'uid': string,
-    'username': string,
-    'competition_selected': string
-  } = {
-      uid: "",
-      username: "",
-      competition_selected: ""
-    };
+export class ApiService implements OnDestroy {
+  player: IPlayer;
+  private userSub: Subscription;
 
   constructor(
     private afDB: AngularFireDatabase
-  ) { }
+  ) {
+    this.player = {
+      uid: '',
+      username: '',
+      competition_selected: '',
+    }
+   }
 
-  getUsers() {
-    return this.afDB.list('/users', ref => ref.limitToLast(50)).valueChanges();
+   getCurrentPlayer(authID): Observable<IPlayer> {
+    return this.afDB.object('/users/' + authID)
+      .snapshotChanges()
+      .map(player => {
+        return {
+          uid: player.key, ...player.payload.val()
+        };
+      })
+      .map(res => res as IPlayer);
   }
 
+  set currentPlayer(player) {
+    this.player = player;
+  }
+
+  get uid(): string {
+    return this.player.uid;
+  }
+
+  get username(): string {
+    return this.player.username;
+  }
+
+  get competitionSelected(): string {
+    return this.player.competition_selected;
+  }
+   
   getCompetitions() {
     return this.afDB.list('/competition', ref => ref.limitToLast(50))
-      .snapshotChanges()
-      .map(actions => {
-        return actions.map(action => ({
-          key: action.key, ...action.payload.val()
-        }));
-      });
+    .snapshotChanges()
+    .map(actions => {
+      return actions.map(action => ({
+        key: action.key, ...action.payload.val()
+      }));
+    });
   }
-
+  
   getCompetitionsForUser(uid) {
     return this.afDB.list('/competition/', ref => ref.orderByChild('users/' + uid)
-      .limitToLast(50))
-      .snapshotChanges()
-      .map(actions => {
-        return actions.map(action => ({
-          key: action.key, ...action.payload.val()
-        }));
-      });
+    .limitToLast(50))
+    .snapshotChanges()
+    .map(actions => {
+      return actions.map(action => ({
+        key: action.key, ...action.payload.val()
+      }));
+    });
   }
-
-  getMatches(competition) {
+  
+  getCompetitionsForCurrentUser() {
+    return this.afDB.list('/competition/', ref => ref.orderByChild('users/' + this.player.uid)
+    .limitToLast(50))
+    .snapshotChanges()
+    .map(actions => {
+      return actions.map(action => ({
+        key: action.key, ...action.payload.val()
+      }));
+    });
+  }
+  
+  getMatches() {
+    let selectedCompetition = this.player.competition_selected
     return this.afDB.list('/matches', ref => ref.orderByChild('competition')
-      .equalTo(competition)
-      .limitToLast(50))
-      .valueChanges();
+    .equalTo(selectedCompetition)
+    .limitToLast(50))
+    .valueChanges();
   }
-
+  
   getPlayersInCompetition(competitionid) {
     return this.afDB.list('/rank/' + competitionid)
     .snapshotChanges()
@@ -61,8 +97,12 @@ export class ApiService {
     });
   }
 
-  getUser(uid) {
-    return this.afDB.object('/users/' + uid).valueChanges();
+  getUsers() {
+    return this.afDB.list('/users', ref => ref.limitToLast(50)).valueChanges();
+  }
+    
+  getUser(uid): Observable<IPlayer> {
+    return this.afDB.object('/users/' + uid).valueChanges().map(res => res as IPlayer);
   }
 
   saveMatch(competition) {
@@ -98,8 +138,8 @@ export class ApiService {
   }
 
   ngOnDestroy() {
-    // if(this.userSub) {
-    //   this.userSub.unsubscribe();
-    // }
+    if(this.userSub) {
+      this.userSub.unsubscribe();
+    }
   }
 }

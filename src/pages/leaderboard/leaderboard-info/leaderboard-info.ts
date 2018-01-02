@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, ViewController, ToastController } from 'ionic-angular';
 import { ApiService } from '../../../providers/api-service';
-import { Subscription } from 'rxjs/Subscription';
 import { Clipboard } from '@ionic-native/clipboard';
 
 /*

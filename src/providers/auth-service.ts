@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ToastController } from 'ionic-angular';
 import { AngularFireDatabase } from 'angularfire2/database';
-import { AngularFireAuth, AngularFireAuthProvider } from 'angularfire2/auth';
-// import { FirebaseAuthState, AuthProviders, AuthMethods, AngularFire } from 'angularfire2';
+import { AngularFireAuth } from 'angularfire2/auth';
 import { ApiService } from './api-service';
 import { Subscription } from 'rxjs/Subscription';
 import { User } from 'firebase';
@@ -21,7 +20,6 @@ export class AuthService {
   private authSub: Subscription;
 
   constructor(
-    private afDB: AngularFireDatabase,
     private afAuth: AngularFireAuth,
     private toastCtrl: ToastController,
     private apiService: ApiService

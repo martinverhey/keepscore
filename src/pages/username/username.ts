@@ -17,7 +17,6 @@ export class UsernamePage {
   private username: string = "";
 
   constructor(private navCtrl: NavController, 
-              private navParams: NavParams, 
               private authService: AuthService) {}
 
   loginAnonymous() {

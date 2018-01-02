@@ -1,4 +1,3 @@
-import { RegisterPage } from '../register/register';
 import { Component } from '@angular/core';
 import { NavController, NavParams, ViewController, ToastController } from 'ionic-angular';
 import { AngularFireAuth } from 'angularfire2/auth';
@@ -20,8 +19,6 @@ export class LoginPage {
     password: '',
     passwordRetyped: ''
   };
-  // private email: string;
-  // private password: string;
   private registered: boolean = false;
   private title: string = "Login";
 
@@ -29,8 +26,6 @@ export class LoginPage {
     public navCtrl: NavController, 
     public navParams: NavParams, 
     private afAuth: AngularFireAuth,
-    // public angularFire: AngularFire, 
-    private viewCtrl: ViewController, 
     private toastCtrl: ToastController
   ) {}
 

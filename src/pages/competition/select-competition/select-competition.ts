@@ -22,8 +22,8 @@ export class SelectCompetitionPage {
   private competitions: any[] = [];
   private competitionSub: Subscription;
   private loader: Loading;
-  private userSub: Subscription;
-  private uid: string;
+  uid: string;
+  competitionID: string;
   
   constructor(
     public navCtrl: NavController, 
@@ -37,26 +37,19 @@ export class SelectCompetitionPage {
   
   ngOnInit() {
     this.presentLoading();
-    this.uid = this.apiService.player.uid;
-    this.userSub = this.apiService.getUser(this.uid).subscribe((user) => {
-      this.apiService.player.username = user.username;
-      console.log(this.apiService.player);
-      this.competitionSub = this.apiService.getCompetitionsForUser(this.uid).subscribe(competitions => {
-        console.log(competitions);
-        competitions.forEach(competition => {
-          competition.usersLength = Object.keys(competition.users).length;
-        });
-        this.competitions = competitions;
-      })
-      this.loader.dismiss();
-    }
-  )
+    this.uid = this.apiService.uid;
+    this.competitionID = this.apiService.competitionSelected;
+    this.competitionSub = this.apiService.getCompetitionsForCurrentUser().subscribe(competitions => {
+      console.log(competitions);
+      competitions.forEach(competition => {
+        competition.usersLength = Object.keys(competition.users).length;
+      });
+      this.competitions = competitions;
+    })
+    this.loader.dismiss();
   }
 
   ngOnDestroy() {
-    if (this.userSub) {
-      this.userSub.unsubscribe();
-    }
     if (this.competitionSub) {
       this.competitionSub.unsubscribe();
     }
@@ -72,7 +65,6 @@ export class SelectCompetitionPage {
 
   closePage(key) {
     this.apiService.switchCompetition(key);
-    // this.apiService.getMatches(key);
     const root = this.app.getRootNav();
     root.setRoot(TabsPage);
   }

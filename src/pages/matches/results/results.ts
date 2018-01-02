@@ -3,13 +3,14 @@ import { Component } from '@angular/core';
 import { Loading, LoadingController, NavController } from 'ionic-angular';
 import { ApiService } from '../../../providers/api-service';
 import { AddMatchPage } from '../add-match/add-match';
+import { IPlayer } from '../../../models/player.models';
 
 @Component({
   selector: 'page-results',
   templateUrl: 'results.html'
 })
 export class ResultsPage {
-  private user: any;
+  private user: IPlayer;
   private currentCompetitionID: string;
   private userSub: Subscription;
   private matches: any;
@@ -28,18 +29,14 @@ export class ResultsPage {
   }
   
   ionViewDidEnter() {
-    this.userSub = this.apiService.getUser(this.apiService.player.uid).subscribe((user) => {
-      this.user = user;
-      if (this.currentCompetitionID !== user.competition_selected) {
-        this.currentCompetitionID = user.competition_selected;
-        // this.apiService.getMatches(this.currentCompetitionID)
-        this.matchesSubscribe();
-      }
-    });
+    this.currentCompetitionID = this.apiService.player.competition_selected;
+    this.user = this.apiService.player;
+    console.log(this.user);
+    this.matchesSubscribe();
   }
   
   matchesSubscribe() {
-    this.matchSub = this.apiService.getMatches(this.currentCompetitionID).subscribe((matches) => {
+    this.matchSub = this.apiService.getMatches().subscribe((matches) => {
       this.matches = matches;
       this.matches.map(match => {
         match.points.team1Positive = Math.abs(match.points.team1);

@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuth } from 'angularfire2/auth';
 
 import { UsernamePage } from "../pages/username/username";
@@ -16,19 +15,20 @@ export class MyApp {
   rootPage: any;
 
   constructor(platform: Platform, 
-              private afModule: AngularFireModule,
               private afAuth: AngularFireAuth, 
               private apiService: ApiService,
               private splashScreen: SplashScreen,
               private statusBar: StatusBar
             ) {
     this.afAuth.authState.subscribe(auth => {
-      // console.log(auth);
       if (!auth) {
         this.rootPage = UsernamePage;
       } else {
-        this.apiService.player.uid = auth.uid;
-        this.rootPage = SelectCompetitionPage;
+        this.apiService.getCurrentPlayer(auth.uid).subscribe(currentPlayer => {
+          console.log(currentPlayer)
+          this.apiService.player = currentPlayer;
+          this.rootPage = SelectCompetitionPage;
+        })
       }
     })
 

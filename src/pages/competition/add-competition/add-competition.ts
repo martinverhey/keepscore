@@ -1,4 +1,3 @@
-import { AuthService } from '../../../providers/auth-service';
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { ToastController } from 'ionic-angular';

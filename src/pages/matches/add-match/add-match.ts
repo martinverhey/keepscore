@@ -40,11 +40,9 @@ export class AddMatchPage implements OnInit {
   constructor ( 
     public navCtrl: NavController, 
     public alertCtrl: AlertController, 
-    public modalCtrl: ModalController, 
-    private navParams: NavParams, 
+    public modalCtrl: ModalController,
     private apiService: ApiService, 
-    private toastCtrl: ToastController, 
-    private authService: AuthService
+    private toastCtrl: ToastController
   ) {
     this.team1 = new Team();
     this.team2 = new Team();
