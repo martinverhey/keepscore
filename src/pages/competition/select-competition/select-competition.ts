@@ -2,11 +2,9 @@ import { ApiService } from '../../../providers/api-service';
 import { Component } from '@angular/core';
 import { App, NavController, NavParams, Loading, LoadingController } from 'ionic-angular';
 import { AddCompetitionPage } from '../add-competition/add-competition';
-import { SearchCompetitionPage } from '../search-competition/search-competition';
+import { JoinCompetitionPage } from '../join-competition/join-competition';
 import { TabsPage } from '../../tabs/tabs';
 import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
-import { AngularFireDatabase } from 'angularfire2/database';
 
 /*
   Generated class for the Competition page.
@@ -30,8 +28,7 @@ export class SelectCompetitionPage {
     public navParams: NavParams,
     private loadingCtrl: LoadingController,
     private apiService: ApiService,
-    private app: App,
-    private afDB: AngularFireDatabase
+    private app: App
   ) { 
   }
   
@@ -41,9 +38,9 @@ export class SelectCompetitionPage {
     this.competitionID = this.apiService.competitionSelected;
     this.competitionSub = this.apiService.getCompetitionsForCurrentUser().subscribe(competitions => {
       console.log(competitions);
-      competitions.forEach(competition => {
-        competition.usersLength = Object.keys(competition.users).length;
-      });
+      // competitions.forEach(competition => {
+      //   competition.usersLength = Object.keys(competition.users).length;
+      // });
       this.competitions = competitions;
     })
     this.loader.dismiss();
@@ -59,8 +56,8 @@ export class SelectCompetitionPage {
     this.navCtrl.push(AddCompetitionPage);
   }
 
-  pushSearchPage() {
-    this.navCtrl.push(SearchCompetitionPage);
+  pushJoinPage() {
+    this.navCtrl.push(JoinCompetitionPage);
   }
 
   closePage(key) {

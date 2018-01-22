@@ -1,12 +1,11 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { NavController, ToastController, AlertController, ModalController, NavParams } from 'ionic-angular';
+import { NavController, ToastController, AlertController, ModalController } from 'ionic-angular';
 import { Subscription } from "rxjs/Subscription";
 import 'rxjs/add/operator/take';
 import * as Firebase from 'firebase';
 
 import { PlayerListPage } from '../../player/player-list/player-list';
 import { ApiService } from '../../../providers/api-service';
-import { AuthService } from '../../../providers/auth-service';
 import { Match } from './match.component';
 import { Team } from './team.component';
 
@@ -146,10 +145,8 @@ export class AddMatchPage implements OnInit {
     match.created_at = Firebase.database.ServerValue.TIMESTAMP;
     match.userid = this.apiService.player.uid;
     match.username = this.apiService.player.username;
-    match.competition = this.apiService.player.competition_selected;
     match = {
       created_at: match.created_at,
-      competition: match.competition,
       owner: {
         username: match.username,
         id: match.userid,

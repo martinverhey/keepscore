@@ -38,7 +38,7 @@ export class AddCompetitionPage {
     if (this.name.length <= 20) {
       this.apiService.saveCompetition(this.name, this.uid).then((item) => {
         console.log(item)
-        this.apiService.createCompetitionAndAddPlayer(item.key, this.apiService.player.username, this.name);
+        this.apiService.addPlayerToCompetition(item.key, this.name);
       });
       this.presentToast('Competition was added successfully');
       this.popPage();

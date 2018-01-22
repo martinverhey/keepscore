@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavController, NavParams, ViewController } from 'ionic-angular';
 
 /*
@@ -11,7 +11,7 @@ import { NavController, NavParams, ViewController } from 'ionic-angular';
   selector: 'page-player-list',
   templateUrl: 'player-list.html'
 })
-export class PlayerListPage implements OnInit {
+export class PlayerListPage {
   players: any;
   selectedPlayer: string = "";
 
@@ -22,9 +22,6 @@ export class PlayerListPage implements OnInit {
   ) {
     this.players = this.navParams.get('players');
     this.selectedPlayer = this.navParams.get('selectedPlayer');
-  }
-
-  ngOnInit() {
   }
 
   dismissModal() {

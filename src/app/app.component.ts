@@ -7,6 +7,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { UsernamePage } from "../pages/username/username";
 import { SelectCompetitionPage } from "../pages/competition/select-competition/select-competition";
 import { ApiService } from '../providers/api-service';
+import { TabsPage } from '../pages/tabs/tabs';
 
 @Component({
   templateUrl: 'app.html'
@@ -27,7 +28,11 @@ export class MyApp {
         this.apiService.getCurrentPlayer(auth.uid).subscribe(currentPlayer => {
           console.log(currentPlayer)
           this.apiService.player = currentPlayer;
-          this.rootPage = SelectCompetitionPage;
+          if (currentPlayer.competition_selected) {
+            this.rootPage = TabsPage;
+          } else {
+            this.rootPage = SelectCompetitionPage;
+          }
         })
       }
     })

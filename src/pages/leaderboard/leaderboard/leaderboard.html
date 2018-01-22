@@ -14,11 +14,9 @@
   </ion-navbar>
 </ion-header>
 
-
 <ion-content>
-
   <ion-list>
-    <ion-item *ngFor="let player of players; let i = index" style="vertical-align-content">
+    <ion-item *ngFor="let player of players; let i = index">
       <ion-row [class.selected]="user.uid === player.key">
         <ion-col text-left align-self-center col-1>
           <ion-icon name="trophy" item-left *ngIf="i == 0" [style.color]="firstPlace"></ion-icon>
@@ -38,5 +36,4 @@
       </ion-row>
     </ion-item>
   </ion-list>
-
 </ion-content>

@@ -23,11 +23,10 @@ import { RegisterPage } from '../pages/register/register';
 import { UsernamePage } from '../pages/username/username';
 import { SelectCompetitionPage } from '../pages/competition/select-competition/select-competition';
 import { AddCompetitionPage } from '../pages/competition/add-competition/add-competition';
-import { SearchCompetitionPage } from '../pages/competition/search-competition/search-competition';
-import { ProfilePage } from '../pages/player/profile/profile';
+import { JoinCompetitionPage } from '../pages/competition/join-competition/join-competition';
+import { CompetitionPage } from '../pages/player/competition/competition';
 import { TabsPage } from '../pages/tabs/tabs';
 import { ApiService } from '../providers/api-service';
-import { PlayerService } from '../providers/player-service';
 import { OrderByPipe } from '../providers/orderBy.pipe';
 import { ArrayFilterPipe } from '../providers/array-filter.pipe';
 import { SearchPipe } from '../providers/search.pipe';
@@ -67,8 +66,8 @@ export const firebaseConfig = {
     UsernamePage,
     SelectCompetitionPage,
     AddCompetitionPage,
-    SearchCompetitionPage,
-    ProfilePage,
+    JoinCompetitionPage,
+    CompetitionPage,
     TabsPage,
     OrderByPipe,
     SearchPipe,
@@ -97,13 +96,12 @@ export const firebaseConfig = {
     UsernamePage,
     SelectCompetitionPage,
     AddCompetitionPage,
-    SearchCompetitionPage,
-    ProfilePage,
+    JoinCompetitionPage,
+    CompetitionPage,
     TabsPage
   ],
   providers: [
-    ApiService, 
-    PlayerService, 
+    ApiService,
     OrderByPipe, 
     ArrayFilterPipe, 
     SearchPipe, 

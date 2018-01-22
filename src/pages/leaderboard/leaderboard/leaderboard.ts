@@ -16,9 +16,8 @@ export class LeaderboardPage implements OnInit {
   public firstPlace = "#C98910";
   public secondPlace = "#A8A8A8";
   public thirdPlace = "#965A38";
-  public otherPlaces = "rgba(0,0,0,.1)"
+  public otherPlaces = "rgba(0,0,0,.1)";
   private loader: Loading;
-  private users: any;
 
   constructor(public navCtrl: NavController, 
               private apiService: ApiService, 

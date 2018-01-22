@@ -29,7 +29,7 @@
       <ion-row>
         <ion-col>
           <h2>{{competition.name}}</h2>
-          <p><i>{{competition.usersLength}} members</i></p>
+          <!-- <p><i>{{competition.usersLength}} members</i></p> -->
         </ion-col>
       </ion-row>
       <ion-icon name="checkmark" item-right class="selected" large *ngIf="competition.key === competitionID"></ion-icon>
@@ -37,7 +37,7 @@
   </ion-card>
   <ion-row>
     <ion-col text-center>
-      <button ion-button round (click)="pushSearchPage()">Join competition</button>
+      <button ion-button round (click)="pushJoinPage()">Join competition</button>
     </ion-col>
   </ion-row>
 </ion-content>

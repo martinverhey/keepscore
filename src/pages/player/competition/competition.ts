@@ -13,10 +13,10 @@ import { Clipboard } from '@ionic-native/clipboard';
   Ionic pages and navigation.
 */
 @Component({
-  selector: 'page-profile',
-  templateUrl: 'profile.html'
+  selector: 'page-competition',
+  templateUrl: 'competition.html'
 })
-export class ProfilePage {
+export class CompetitionPage {
   public amountOfCompetitions: number;
   private userSubscription: Subscription;
   private competition: any;

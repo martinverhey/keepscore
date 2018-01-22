@@ -1,14 +1,13 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import firebase from 'firebase';
-import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { IPlayer } from '../models/player.models';
+import { ICompetition } from '../models/competition.models';
 
 @Injectable()
-export class ApiService implements OnDestroy {
+export class ApiService {
   player: IPlayer;
-  private userSub: Subscription;
 
   constructor(
     private afDB: AngularFireDatabase
@@ -57,34 +56,30 @@ export class ApiService implements OnDestroy {
     });
   }
   
-  getCompetitionsForUser(uid) {
-    return this.afDB.list('/competition/', ref => ref.orderByChild('users/' + uid)
-    .limitToLast(50))
-    .snapshotChanges()
-    .map(actions => {
-      return actions.map(action => ({
-        key: action.key, ...action.payload.val()
-      }));
-    });
-  }
-  
   getCompetitionsForCurrentUser() {
-    return this.afDB.list('/competition/', ref => ref.orderByChild('users/' + this.player.uid)
-    .limitToLast(50))
+    return this.afDB.list('/users/' + this.player.uid + '/competitions/', ref => ref.limitToLast(10))
     .snapshotChanges()
-    .map(actions => {
-      return actions.map(action => ({
-        key: action.key, ...action.payload.val()
+    .map(competitions => {
+      return competitions.map(competition => ({
+        name: competition.payload.val(),
+        key: competition.key,
       }));
     });
+    // .map(competitions => {
+    //   return competitions.map(competition => ({
+    //     name: competition.payload.val(),
+    //     key: competition.key, ...competition.payload.val()
+    //   }))
+    // });
+    // .map(actions => {
+    //   return actions.map(action => ({
+    //     key: action.key, ...action.payload.val()
+    //   }));
+    // });
   }
   
   getMatches() {
-    let selectedCompetition = this.player.competition_selected
-    return this.afDB.list('/matches', ref => ref.orderByChild('competition')
-    .equalTo(selectedCompetition)
-    .limitToLast(50))
-    .valueChanges();
+    return this.afDB.list('/matches/' + this.player.competition_selected, ref => ref.limitToLast(50)).valueChanges();
   }
   
   getPlayersInCompetition(competitionid) {
@@ -105,8 +100,12 @@ export class ApiService implements OnDestroy {
     return this.afDB.object('/users/' + uid).valueChanges().map(res => res as IPlayer);
   }
 
+  getCompetition(key) {
+    return this.afDB.object('/competition/' + key).valueChanges().map(res => res as ICompetition);
+  }
+
   saveMatch(competition) {
-    return this.afDB.list('/matches').push(competition);
+    return this.afDB.list('/matches/' + this.player.competition_selected).push(competition);
   }
 
   saveUser(uid, username) {
@@ -125,11 +124,22 @@ export class ApiService implements OnDestroy {
     })
   }
 
-  createCompetitionAndAddPlayer(key, username, competitionName) {
-    firebase.database().ref('competition/' + key + '/users/' + this.player.uid).set(username);
-    firebase.database().ref('users/' + this.player.uid + '/competition_selected').set(key);
-    firebase.database().ref('users/' + this.player.uid + '/competitions/' + key).set(competitionName);
-    firebase.database().ref('rank/' + key + '/' + this.player.uid + '/username').set(this.player.username);
+  addPlayerToCompetition(key, competitionName) {
+    let updateData = {};
+    updateData['competition/' + key + '/users/' + this.player.uid] = this.player.username;
+    updateData['users/' + this.player.uid + '/competition_selected'] = key;
+    updateData['users/' + this.player.uid + '/competitions/' + key] = competitionName;
+    updateData['rank/' + key + '/' + this.player.uid + '/username'] = this.player.username;
+    return firebase.database().ref().root.update(updateData, function(error) {
+      if (error) {
+        console.log("Error updating data:", error);
+      }
+    });
+
+    // firebase.database().ref('competition/' + key + '/users/' + this.player.uid).set(this.player.username);
+    // firebase.database().ref('users/' + this.player.uid + '/competition_selected').set(key);
+    // firebase.database().ref('users/' + this.player.uid + '/competitions/' + key).set(competitionName);
+    // firebase.database().ref('rank/' + key + '/' + this.player.uid + '/username').set(this.player.username);
   }
 
   switchCompetition(key) {
@@ -137,9 +147,4 @@ export class ApiService implements OnDestroy {
     this.player.competition_selected = key;
   }
 
-  ngOnDestroy() {
-    if(this.userSub) {
-      this.userSub.unsubscribe();
-    }
-  }
 }

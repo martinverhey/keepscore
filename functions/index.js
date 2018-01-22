@@ -8,21 +8,21 @@ admin.initializeApp(functions.config().firebase);
 // https://firebase.google.com/docs/functions/write-firebase-functions
 
 // Calculate score
-exports.calculatePoints = functions.database.ref('/matches/{matchid}').onWrite(event => {
+exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matchid}').onWrite(event => {
 
   // When the data is deleted.
   if (!event.data.exists()) {
     const snapshot = event.data;
     const match = event.data.previous.val();
-    const match_id = snapshot._path.replace('/matches/','');
+    const match_path = snapshot._path.replace('/matches/','');
     const teams = match.teams;
     const points = match.points;
-    const competition_id = match.competition;
+    const competition_id = match_path.split('/')[0];
 
-    console.log("Match " + match_id + " got deleted.")
+    console.log("Match " + match_path + " got deleted.")
     console.log(match);
 
-    onDelete(match_id, teams, points, competition_id);
+    onDelete(match_path, teams, points, competition_id);
 
     return;
   }
@@ -36,9 +36,9 @@ exports.calculatePoints = functions.database.ref('/matches/{matchid}').onWrite(e
   console.log(snapshot);
   const match = event.data.val();
   console.log(match);
-  const match_id = snapshot._path.replace('/matches/','');
+  const match_path = snapshot._path.replace('/matches/','');
   const created_at = match.created_at;
-  const competition_id = match.competition;
+  const competition_id = match_path.split('/')[0];
   const scoreTeam1 = Number(match.scores.team1);
   const scoreTeam2 = Number(match.scores.team2);  
   const teams = match.teams;
@@ -70,11 +70,11 @@ exports.calculatePoints = functions.database.ref('/matches/{matchid}').onWrite(e
           teamRanking.push(rank);        
           totalTeamPoints += rank;
           totalTeamPlayers++;
-          console.log(match_id + " " + username + " " + rank + " (" + totalTeamPlayers + "/" + Object.keys(teams[team]).length + ")");
+          console.log(match_path + " " + username + " " + rank + " (" + totalTeamPlayers + "/" + Object.keys(teams[team]).length + ")");
           
           if (totalTeamPlayers == Object.keys(teams[team]).length) {
             totalTeams++;
-            console.log(match_id + " " + team + " average " + totalTeamPoints / Object.keys(teams[team]).length);
+            console.log(match_path + " " + team + " average " + totalTeamPoints / Object.keys(teams[team]).length);
             teamRankings.push(teamRanking);
             averageTeamPoints.push(totalTeamPoints / Object.keys(teams[team]).length);
           }
@@ -95,7 +95,7 @@ exports.calculatePoints = functions.database.ref('/matches/{matchid}').onWrite(e
     strengthDifference = Math.abs(Number(averageTeamPoints[0]) - Number(averageTeamPoints[1]));
     strengthDifference = Math.min(Math.max(strengthDifference, 0), 400);
     winExpectation = -0.000003 * (strengthDifference * strengthDifference) + 0.0023 * strengthDifference + 0.5;
-    console.log(match_id + " Point pool " + pointsToWin + " (" + constant + " + score difference " + scoreDifference + ")");
+    console.log(match_path + " Point pool " + pointsToWin + " (" + constant + " + score difference " + scoreDifference + ")");
 
     setMultiplicationValues(strengthDifference, winExpectation, averageTeamPoints);
   }
@@ -108,21 +108,21 @@ exports.calculatePoints = functions.database.ref('/matches/{matchid}').onWrite(e
     {
       multiplication.push(1 - winExpectation);
       multiplication.push(winExpectation);
-      console.log(match_id + " Team 1 is " + strengthDifference + " points stronger. Win chance of ~" + Math.round(winExpectation * 100) + "%");
+      console.log(match_path + " Team 1 is " + strengthDifference + " points stronger. Win chance of ~" + Math.round(winExpectation * 100) + "%");
     }
     // Both teams have the same strength.
     else if (averageTeamPoints[0] == averageTeamPoints[1]) 
     {
       multiplication.push(winExpectation);
       multiplication.push(winExpectation);
-      console.log(match_id + " Teams are equally strong with " + strengthDifference + " points difference. Win chance is " + winExpectation * 100 + "%");
+      console.log(match_path + " Teams are equally strong with " + strengthDifference + " points difference. Win chance is " + winExpectation * 100 + "%");
     }
     // Team 2 is stronger
     else if (averageTeamPoints[0] < averageTeamPoints[1])
     {
       multiplication.push(winExpectation);
       multiplication.push(1 - winExpectation);
-      console.log(match_id + " Team 2 is " + strengthDifference + " points stronger. Win chance of ~" + Math.round(winExpectation * 100) + "%");
+      console.log(match_path + " Team 2 is " + strengthDifference + " points stronger. Win chance of ~" + Math.round(winExpectation * 100) + "%");
     }
     setPoints(multiplication);    
   }
@@ -135,16 +135,16 @@ exports.calculatePoints = functions.database.ref('/matches/{matchid}').onWrite(e
       let pointsTeam1 = Math.round(pointsToWin * multiplication[0]);
       pointsChanged.push(pointsTeam1);
       pointsChanged.push(-pointsTeam1);
-      console.log(match_id + " Multiplication Team 1: " + multiplication[0] + " Team 2: " + multiplication[1])
-      console.log(match_id + " " + pointsToWin + " * " + multiplication[0] + " = " + pointsChanged[0]);
-      console.log(match_id + " Team 1 won " + pointsChanged[0] + " Team 2 lost " + pointsChanged[1]);
+      console.log(match_path + " Multiplication Team 1: " + multiplication[0] + " Team 2: " + multiplication[1])
+      console.log(match_path + " " + pointsToWin + " * " + multiplication[0] + " = " + pointsChanged[0]);
+      console.log(match_path + " Team 1 won " + pointsChanged[0] + " Team 2 lost " + pointsChanged[1]);
       saveTeamPoints(pointsChanged);
     }
     // Draw
     else if (scoreTeam1 == scoreTeam2) {
       pointsChanged.push(0);
       pointsChanged.push(0);
-      console.log(match_id + " Draw. No points won/lost.");
+      console.log(match_path + " Draw. No points won/lost.");
       saveTeamPoints(pointsChanged);
     } 
     // Team 2 won
@@ -152,15 +152,15 @@ exports.calculatePoints = functions.database.ref('/matches/{matchid}').onWrite(e
       let pointsTeam2 = Math.round(pointsToWin * multiplication[1]);
       pointsChanged[1] = pointsTeam2;
       pointsChanged[0] = -pointsTeam2;
-      console.log(match_id + " Team 1 multiplication: " + multiplication[0] + " Team 2 multiplication: " + multiplication[1])
-      console.log(match_id + " " + pointsToWin + " * " + multiplication[1] + " = " + pointsChanged[1]);
-      console.log(match_id + " Team 2 won " + pointsChanged[1] + " Team 1 lost " + pointsChanged[0]);
+      console.log(match_path + " Team 1 multiplication: " + multiplication[0] + " Team 2 multiplication: " + multiplication[1])
+      console.log(match_path + " " + pointsToWin + " * " + multiplication[1] + " = " + pointsChanged[1]);
+      console.log(match_path + " Team 2 won " + pointsChanged[1] + " Team 1 lost " + pointsChanged[0]);
       saveTeamPoints(pointsChanged);
     }
   }
 
   function saveTeamPoints(pointsChanged) {
-    admin.database().ref('/matches/' + match_id + '/points').set({
+    admin.database().ref('/matches/' + match_path + '/points').set({
       "team1": pointsChanged[0],
       "team2": pointsChanged[1]
     })
@@ -173,16 +173,16 @@ exports.calculatePoints = functions.database.ref('/matches/{matchid}').onWrite(e
         let id = teams[team][player].id;
         let username = teams[team][player].username;
         let newRank = teamRankings[key][key2] + pointsChanged[key];
-        console.log(match_id + " " + id + " " + username + " " + teamRankings[key][key2] + " (" + pointsChanged[key] + ") = " + newRank);
-        admin.database().ref('/ranking/' + id + '/' + match_id).set({
+        console.log(match_path + " " + id + " " + username + " " + teamRankings[key][key2] + " (" + pointsChanged[key] + ") = " + newRank);
+        admin.database().ref('/ranking/' + id + '/' + match_path).set({
           "timestamp": created_at,
-          "competition": competition_id,
           "change": pointsChanged[key],
           "previous": teamRankings[key][key2],
           "new": newRank,
           "username": username
         })
-        admin.database().ref('/users/' + id + '/matches/' + match_id).set(true)
+        let status = pointsChanged[key] > 0 ? 'won' : 'lost';
+        admin.database().ref('/users/' + id + '/matches/' + match_path).set(status);
         admin.database().ref('/rank/' + competition_id + '/' + id + '/rank').transaction(function(currentRank) {
           let updatedRank = currentRank + pointsChanged[key];
           return updatedRank;
@@ -191,20 +191,20 @@ exports.calculatePoints = functions.database.ref('/matches/{matchid}').onWrite(e
     })
   }
 
-  function onDelete(match_id, teams, points, competition_id) {
+  function onDelete(match_path, teams, points, competition_id) {
     Object.keys(teams).forEach(function(team, key) {
       Object.keys(teams[team]).forEach(function(player, key2) {
         let id = teams[team][player].id;
         let username = teams[team][player].username;
         
         return admin.database().ref('/users/' + id).once('value').then(function(snapshot) {
-          admin.database().ref('/ranking/' + id + '/' + match_id).remove()
-          admin.database().ref('/users/' + id + '/matches/' + match_id).remove()
+          admin.database().ref('/ranking/' + id + '/' + match_path).remove()
+          admin.database().ref('/users/' + id + '/matches/' + match_path).remove()
           admin.database().ref('/rank/' + competition_id + '/' + id + '/rank').transaction(function(currentRank) {
             let oldRank = currentRank - Number(points[team]);
             return oldRank;
           }, function(error, committed, snapshot) {
-            console.log(match_id + " " + id + " " + username + " (" + points[team] + " refunded) = ", snapshot.val());
+            console.log(match_path + " " + id + " " + username + " (" + points[team] + " refunded) = ", snapshot.val());
           });
         })
 

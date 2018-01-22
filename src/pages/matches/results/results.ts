@@ -1,4 +1,3 @@
-import { Subscription } from 'rxjs/Rx';
 import { Component } from '@angular/core';
 import { Loading, LoadingController, NavController } from 'ionic-angular';
 import { ApiService } from '../../../providers/api-service';
@@ -12,7 +11,6 @@ import { IPlayer } from '../../../models/player.models';
 export class ResultsPage {
   private user: IPlayer;
   private currentCompetitionID: string;
-  private userSub: Subscription;
   private matches: any;
   private firstDate: string;
   private loader: Loading;
