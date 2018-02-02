@@ -7,13 +7,8 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Competition(s)
+      Competitions
     </ion-title>
-    <!-- <ion-buttons start>
-      <button ion-button icon-only color="light" (click)="closePage()">
-        Close
-      </button>
-    </ion-buttons>   -->
     <ion-buttons end>
       <button ion-button icon-only color="light" (click)="pushAddPage()">
         <ion-icon name="add"></ion-icon>
@@ -29,7 +24,6 @@
       <ion-row>
         <ion-col>
           <h2>{{competition.name}}</h2>
-          <!-- <p><i>{{competition.usersLength}} members</i></p> -->
         </ion-col>
       </ion-row>
       <ion-icon name="checkmark" item-right class="selected" large *ngIf="competition.key === competitionID"></ion-icon>

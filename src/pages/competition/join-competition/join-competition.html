@@ -9,24 +9,15 @@
     <ion-title>
       Join Competition
     </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only color="light" (click)="qrScan()">
+        <ion-icon name="qr-scanner"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <!-- <ion-card *ngFor="let competition of competitions">
-    <ion-item (click)="closePage(competition)">
-      <ion-icon name="football" item-left large></ion-icon>
-      <ion-row>
-        <ion-col>
-          <h2>{{competition.name}}</h2>
-          <p><i>{{competition.usersLength}} members</i></p>
-        </ion-col>
-        <ion-col text-center center>
-        </ion-col>
-      </ion-row>
-      <ion-icon name="checkmark" item-right class="selected" large *ngIf="competition.key === currentCompetitionID"></ion-icon>
-    </ion-item>
-  </ion-card> -->
   <ion-row>
     <ion-col text-center>
       <h2>Join</h2>
@@ -50,40 +41,4 @@
     </ion-row>
   </form>
 
-  <!-- <ion-card *ngFor="let competition of competitions">
-    <ion-item (click)="closePage(competition)">
-      <ion-icon name="football" item-left large></ion-icon>
-      <ion-row>
-        <ion-col>
-          <h2>{{competition.name}}</h2>
-          <p><i>{{competition.usersLength}} members</i></p>
-        </ion-col>
-        <ion-col text-center center>
-        </ion-col>
-      </ion-row>
-      <ion-icon name="checkmark" item-right class="selected" large *ngIf="competition.key === currentCompetitionID"></ion-icon>
-    </ion-item>
-  </ion-card> -->
 </ion-content>
-
-
-
-<!-- <ion-content>
-  
-<ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
-  <ion-card *ngFor="let item of items">
-    <ion-item>
-      <ion-icon name="football" item-left large></ion-icon>
-      <h2>{{item}}</h2>
-      <p>#A8E7E</p>
-      <ion-icon name="checkmark" item-right class="selected" large></ion-icon>
-    </ion-item>
-  </ion-card>
-    
-<ion-row>
-  <ion-col text-center>
-    <button ion-button round type="submit" [disabled]="">Search</button>
-  </ion-col>
-</ion-row>
-
-</ion-content> -->

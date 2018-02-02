@@ -4,10 +4,12 @@ import firebase from 'firebase';
 import { Observable } from 'rxjs/Observable';
 import { IPlayer } from '../models/player.models';
 import { ICompetition } from '../models/competition.models';
+import 'rxjs/add/operator/do';
 
 @Injectable()
 export class ApiService {
   player: IPlayer;
+  currentCompetition: ICompetition;
 
   constructor(
     private afDB: AngularFireDatabase
@@ -27,7 +29,8 @@ export class ApiService {
           uid: player.key, ...player.payload.val()
         };
       })
-      .map(res => res as IPlayer);
+      .map(res => res as IPlayer)
+      .do(res => this.player = res);
   }
 
   set currentPlayer(player) {
@@ -46,7 +49,7 @@ export class ApiService {
     return this.player.competition_selected;
   }
    
-  getCompetitions() {
+  getCompetitions(): Observable<ICompetition[]> {
     return this.afDB.list('/competition', ref => ref.limitToLast(50))
     .snapshotChanges()
     .map(actions => {
@@ -65,17 +68,6 @@ export class ApiService {
         key: competition.key,
       }));
     });
-    // .map(competitions => {
-    //   return competitions.map(competition => ({
-    //     name: competition.payload.val(),
-    //     key: competition.key, ...competition.payload.val()
-    //   }))
-    // });
-    // .map(actions => {
-    //   return actions.map(action => ({
-    //     key: action.key, ...action.payload.val()
-    //   }));
-    // });
   }
   
   getMatches() {
@@ -130,16 +122,15 @@ export class ApiService {
     updateData['users/' + this.player.uid + '/competition_selected'] = key;
     updateData['users/' + this.player.uid + '/competitions/' + key] = competitionName;
     updateData['rank/' + key + '/' + this.player.uid + '/username'] = this.player.username;
+    this.currentCompetition = {
+      key: key,
+      name: competitionName
+    }
     return firebase.database().ref().root.update(updateData, function(error) {
       if (error) {
         console.log("Error updating data:", error);
       }
     });
-
-    // firebase.database().ref('competition/' + key + '/users/' + this.player.uid).set(this.player.username);
-    // firebase.database().ref('users/' + this.player.uid + '/competition_selected').set(key);
-    // firebase.database().ref('users/' + this.player.uid + '/competitions/' + key).set(competitionName);
-    // firebase.database().ref('rank/' + key + '/' + this.player.uid + '/username').set(this.player.username);
   }
 
   switchCompetition(key) {

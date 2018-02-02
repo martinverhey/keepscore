@@ -1,6 +1,7 @@
 {
   "projects": {
     "keepscore": "keepscore-c4562",
-    "dev": "keepscoredev"
+    "dev": "keepscoredev",
+    "default": "keepscore-c4562"
   }
 }

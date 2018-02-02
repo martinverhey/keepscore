@@ -28,6 +28,7 @@ export class LeaderboardPage implements OnInit {
   }
   
   ngOnInit() {
+    console.log("init Leaderboard");
     this.loadPlayers();
     this.user = this.apiService.player;
   }
@@ -35,6 +36,7 @@ export class LeaderboardPage implements OnInit {
   loadPlayers() {
     this.presentLoading();
     this.userSub = this.apiService.getPlayersInCompetition(this.apiService.player.competition_selected).subscribe((players) => {
+      console.log("Players found");
       players.sort(function (a,b) {
         return b.rank - a.rank
       })

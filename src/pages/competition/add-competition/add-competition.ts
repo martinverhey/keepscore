@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { App, NavController, NavParams } from 'ionic-angular';
 import { ToastController } from 'ionic-angular';
 import { ApiService } from '../../../providers/api-service';
+import { TabsPage } from '../../tabs/tabs';
 
 /*
   Generated class for the AddPlayer page.
@@ -21,7 +22,8 @@ export class AddCompetitionPage {
     public navCtrl: NavController, 
     public navParams: NavParams, 
     private apiService: ApiService, 
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private app: App
   ) {}
 
   ngOnInit() {
@@ -41,7 +43,10 @@ export class AddCompetitionPage {
         this.apiService.addPlayerToCompetition(item.key, this.name);
       });
       this.presentToast('Competition was added successfully');
-      this.popPage();
+      setTimeout(() => {
+        const root = this.app.getRootNav();
+        root.setRoot(TabsPage);
+      }, 100);
     } else if (this.name.length > 20) {
       console.log("Competition name too long");
       this.presentToast('Only 20 characters allowed');
@@ -52,7 +57,7 @@ export class AddCompetitionPage {
     let toast = this.toastCtrl.create({
       message: text,
       duration: 3000,
-      position: 'middle'
+      position: 'top'
     });
 
     toast.onDidDismiss(() => {

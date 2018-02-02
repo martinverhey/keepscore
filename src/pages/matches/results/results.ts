@@ -9,8 +9,6 @@ import { IPlayer } from '../../../models/player.models';
   templateUrl: 'results.html'
 })
 export class ResultsPage {
-  private user: IPlayer;
-  private currentCompetitionID: string;
   private matches: any;
   private firstDate: string;
   private loader: Loading;
@@ -24,16 +22,10 @@ export class ResultsPage {
 
   ngOnInit() {
     this.presentLoading();
+    this.getMatches();
   }
-  
-  ionViewDidEnter() {
-    this.currentCompetitionID = this.apiService.player.competition_selected;
-    this.user = this.apiService.player;
-    console.log(this.user);
-    this.matchesSubscribe();
-  }
-  
-  matchesSubscribe() {
+ 
+  getMatches() {
     this.matchSub = this.apiService.getMatches().subscribe((matches) => {
       this.matches = matches;
       this.matches.map(match => {

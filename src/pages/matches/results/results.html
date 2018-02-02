@@ -22,13 +22,13 @@
             <span *ngIf="match.points.team1 > 0" text-right>▲ {{match.points.team1Positive}}</span><span *ngIf="match.points.team1 < 0" text-right>▼ {{match.points.team1Positive}}</span><span *ngIf="match.points.team1 === 0" text-right>{{match.points.team1Positive}}</span>
           </ion-col>
           <ion-col text-right align-self-center col-2>
-            <span *ngFor="let player of match.teams.team1" [class.selected]="user.uid === player.id"><p>{{player.username}}</p> </span>
+            <span *ngFor="let player of match.teams.team1" [class.selected]="this.apiService.uid === player.id"><p>{{player.username}}</p> </span>
           </ion-col>
           <ion-col text-center align-self-center col-4>
             <h1>{{match.scores.team1}} - {{match.scores.team2}}</h1>
           </ion-col>
           <ion-col text-left align-self-center col-2>
-            <span *ngFor="let player of match.teams.team2" [class.selected]="user.uid === player.id"><p>{{player.username}}</p> </span>
+            <span *ngFor="let player of match.teams.team2" [class.selected]="this.apiService.uid === player.id"><p>{{player.username}}</p> </span>
           </ion-col>
           <ion-col text-left align-self-center col-2 [ngClass]="(match.points.team2 > 0) ? 'gainColor' : (match.points.team2 < 0) ? 'loseColor' : 'noChangeColor'">
             <span *ngIf="match.points.team2 > 0" text-left>▲ {{match.points.team2Positive}}</span><span *ngIf="match.points.team2 < 0" text-left>▼ {{match.points.team2Positive}}</span><span *ngIf="match.points.team2 === 0" text-left>{{match.points.team2Positive}}</span>

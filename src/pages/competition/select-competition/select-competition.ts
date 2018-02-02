@@ -38,9 +38,6 @@ export class SelectCompetitionPage {
     this.competitionID = this.apiService.competitionSelected;
     this.competitionSub = this.apiService.getCompetitionsForCurrentUser().subscribe(competitions => {
       console.log(competitions);
-      // competitions.forEach(competition => {
-      //   competition.usersLength = Object.keys(competition.users).length;
-      // });
       this.competitions = competitions;
     })
     this.loader.dismiss();

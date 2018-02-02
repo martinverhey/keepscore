@@ -4,6 +4,7 @@ import { SelectCompetitionPage } from '../../competition/select-competition/sele
 import { ApiService } from '../../../providers/api-service';
 import { Subscription } from 'rxjs/Subscription';
 import { Clipboard } from '@ionic-native/clipboard';
+// import { Printer, PrintOptions } from '@ionic-native/printer';
 
 
 /*
@@ -28,32 +29,21 @@ export class CompetitionPage {
     private apiService: ApiService,
     public viewCtrl: ViewController,
     public toastCtrl: ToastController,
-    private clipboard: Clipboard
+    private clipboard: Clipboard,
   ) {}
 
   ngOnInit() {
+    this.competition = this.apiService.currentCompetition;
     this.currentCompetitionID = this.apiService.player.competition_selected;
-    this.apiService.getCompetitions().take(1).subscribe(competitions => {
-      let competition = competitions.filter(element => element.key == this.currentCompetitionID)[0];
-      competition.usersLength = Object.keys(competition.users).length;
-      this.competition = competition;
-    })
-    this.userSubscription = this.apiService.getUser(this.apiService.player.uid).subscribe(user => {
-      this.amountOfCompetitions = Object.keys(user.competitions).length;
-    })
+    this.apiService.getCompetitions()
+      .map(competitions => competitions.find(competition => competition.key == this.currentCompetitionID))
+      .take(1)
+      .subscribe(competition => this.competition = competition);
   }
 
   copyToClipboard() {
     this.clipboard.copy(this.currentCompetitionID);
-    
-    this.clipboard.paste().then(
-      (resolve: string) => {
-        this.presentToast(resolve);
-      },
-      (reject: string) => {
-        this.presentToast('Error: ' + reject);
-      }
-    );
+    this.presentToast("Copied!");
   }
 
   // Return to previous page
@@ -64,8 +54,8 @@ export class CompetitionPage {
   presentToast(text:string) {
     let toast = this.toastCtrl.create({
       message: text,
-      duration: 3000,
-      position: 'middle'
+      duration: 1000,
+      position: 'top'
     });
 
     toast.onDidDismiss(() => {
@@ -73,12 +63,6 @@ export class CompetitionPage {
     });
 
     toast.present();
-  }
-
-  ngOnDestroy() {
-    if (this.userSubscription) {
-      this.userSubscription.unsubscribe()
-    }
   }
 
   pushPage() {

@@ -20,7 +20,6 @@ export class AddPlayerPage {
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams, 
-    // private apiService: ApiService, 
     private toastCtrl: ToastController
   ) {}
 
@@ -34,11 +33,6 @@ export class AddPlayerPage {
     console.log(this.user);
     console.log(this.user.length);
     if (this.user.length <= 10) {
-      // this.apiService.users.push({
-      //   "username": this.user,
-      // // TODO: Let server set the rank.
-      //   "rank": 1000
-      // })
       this.presentToast('User was added successfully');
       this.popPage();
     } else if (this.user.length > 10) {
@@ -51,7 +45,7 @@ export class AddPlayerPage {
     let toast = this.toastCtrl.create({
       message: text,
       duration: 3000,
-      position: 'middle'
+      position: 'top'
     });
 
     toast.onDidDismiss(() => {

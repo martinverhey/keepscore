@@ -21,22 +21,25 @@ export class MyApp {
               private splashScreen: SplashScreen,
               private statusBar: StatusBar
             ) {
-    this.afAuth.authState.subscribe(auth => {
-      if (!auth) {
-        this.rootPage = UsernamePage;
-      } else {
-        this.apiService.getCurrentPlayer(auth.uid).subscribe(currentPlayer => {
-          console.log(currentPlayer)
-          this.apiService.player = currentPlayer;
+    this.afAuth.authState
+      .do(auth => {
+        if (!auth) {
+          this.rootPage = UsernamePage;
+        }
+      })
+      .filter(auth => auth ? true : false)
+      .switchMap(auth => this.apiService.getCurrentPlayer(auth.uid))
+      .subscribe(currentPlayer => {
+        console.log(currentPlayer)
+        if (this.rootPage == UsernamePage || !this.rootPage) {
           if (currentPlayer.competition_selected) {
             this.rootPage = TabsPage;
           } else {
             this.rootPage = SelectCompetitionPage;
           }
-        })
-      }
-    })
-
+        }
+      })
+    
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.

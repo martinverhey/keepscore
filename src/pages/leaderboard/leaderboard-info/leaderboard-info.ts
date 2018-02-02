@@ -35,7 +35,14 @@ export class LeaderboardInfoPage {
   }
 
   copyToClipboard() {
-    this.clipboard.copy(this.currentCompetitionID);
+    this.clipboard.copy(this.currentCompetitionID).then(
+      (resolve: string) => {
+        this.presentToast(resolve);
+      },
+      (reject: string) => {
+        this.presentToast('Error: ' + reject);
+      }
+    );
     
     this.clipboard.paste().then(
       (resolve: string) => {
@@ -56,7 +63,7 @@ presentToast(text:string) {
   let toast = this.toastCtrl.create({
     message: text,
     duration: 3000,
-    position: 'middle'
+    position: 'top'
   });
 
   toast.onDidDismiss(() => {

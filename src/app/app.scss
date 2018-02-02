@@ -35,6 +35,12 @@ ion-item-divider[sticky] {
     border-color: color($colors, light);
 }
 
+// Toast
+ion-toast {
+    left: 8%;
+    width: 84%;
+}
+
 // Bottom bar?
 .bar-button-default, .bar-button-default.bar-button-default, .bar-button-clear-default {
     color: color($colors, light);

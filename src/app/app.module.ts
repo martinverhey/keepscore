@@ -4,6 +4,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { QRScanner } from '@ionic-native/qr-scanner';
 import { Clipboard } from '@ionic-native/clipboard';
+// import { Printer } from '@ionic-native/printer';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule, AngularFireDatabase } from 'angularfire2/database';
@@ -35,20 +36,20 @@ import { AuthService } from '../providers/auth-service';
 // AF2 Settings
 export const firebaseConfig = {
   // PRODUCTION
-  // apiKey: "AIzaSyDAFwPnqLjlsQyBY7_O4T_cT46q3jndSfA",
-  // authDomain: "keepscore-c4562.firebaseapp.com",
-  // databaseURL: "https://keepscore-c4562.firebaseio.com",
-  // projectId: "keepscore-c4562",
-  // storageBucket: "keepscore-c4562.appspot.com",
-  // messagingSenderId: "306614329685"
+  apiKey: "AIzaSyDAFwPnqLjlsQyBY7_O4T_cT46q3jndSfA",
+  authDomain: "keepscore-c4562.firebaseapp.com",
+  databaseURL: "https://keepscore-c4562.firebaseio.com",
+  projectId: "keepscore-c4562",
+  storageBucket: "keepscore-c4562.appspot.com",
+  messagingSenderId: "306614329685"
 
   // DEVELOPMENT
-  apiKey: "AIzaSyB8noOfNh0bHh7EBwWIHW7h1HCH9BhDKH8",
-  authDomain: "keepscoredev.firebaseapp.com",
-  databaseURL: "https://keepscoredev.firebaseio.com",
-  projectId: "keepscoredev",
-  storageBucket: "keepscoredev.appspot.com",
-  messagingSenderId: "673709134237"
+  // apiKey: "AIzaSyB8noOfNh0bHh7EBwWIHW7h1HCH9BhDKH8",
+  // authDomain: "keepscoredev.firebaseapp.com",
+  // databaseURL: "https://keepscoredev.firebaseio.com",
+  // projectId: "keepscoredev",
+  // storageBucket: "keepscoredev.appspot.com",
+  // messagingSenderId: "673709134237"
 };
 
 @NgModule({
@@ -111,6 +112,7 @@ export const firebaseConfig = {
     SplashScreen,
     AngularFireDatabase,
     Clipboard,
+    // Printer,
     {
       provide: ErrorHandler, useClass: IonicErrorHandler
     }]

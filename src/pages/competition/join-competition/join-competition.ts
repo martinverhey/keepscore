@@ -32,7 +32,6 @@ export class JoinCompetitionPage {
 
   ngOnInit() {
     this.currentCompetitionID = this.apiService.player.competition_selected;
-    this.qrScan();
   }
 
   popPage() {
@@ -41,43 +40,60 @@ export class JoinCompetitionPage {
 
   joinCompetition(competitionID) {
     if (competitionID.length == 20) {
-      this.apiService.getCompetition(competitionID).subscribe(competition => {
+      this.apiService.getCompetition(competitionID).take(1).subscribe(competition => {
+        console.log(competition);
         if (competition) {
           console.log(competition);
           this.apiService.addPlayerToCompetition(competitionID, competition.name).then(() => {
+            this.presentToast('Successfully joined: ' + competition.name);
             setTimeout(() => {
               const root = this.app.getRootNav();
-              root.setRoot(TabsPage);              
-            }, 1500);
+              root.setRoot(TabsPage);
+            }, 100);
           });
         } else {
           this.presentToast('Competition does not exist.');
         }
       })
+    } else {
+      this.presentToast('Competition does not exist.');
     }
   }
 
   qrScan() {
+    const context = this;
     if(this.platform.is('cordova')) {
     // Optionally request the permission early
     this.qrScanner.prepare()
     .then((status: QRScannerStatus) => {
       if (status.authorized) {
         // camera permission was granted
-
+        console.log('Scanning...');
+        const ionApp = <HTMLElement>document.getElementsByTagName("ion-app")[0];
 
         // start scanning
         let scanSub = this.qrScanner.scan().subscribe((competitionID: string) => {
-          console.log('Scanned something', competitionID);
-          
-          this.qrScanner.hide(); // hide camera preview
+          console.log('Scanned QR: ', competitionID);
+
+          this.qrScanner.destroy(); // hide camera preview
           scanSub.unsubscribe(); // stop scanning
+          ionApp.style.display = 'block';
           
           this.joinCompetition(competitionID);
         });
 
         // show camera preview
+        ionApp.style.display = 'none';
         this.qrScanner.show();
+        context.qrScanner.show();
+        setTimeout(() => {
+          if(ionApp.style.display == 'none') {
+            ionApp.style.display = 'block';
+            scanSub.unsubscribe(); // stop scanning
+            context.qrScanner.destroy();
+            this.presentToast('Scanning time-out.');
+          }
+        }, 8000);
 
         // wait for user to scan something, then the observable callback will be called
 
@@ -93,18 +109,11 @@ export class JoinCompetitionPage {
   }
   }
 
-  // closePage(key) {
-  //   console.log(key);
-  //   this.apiService.createCompetitionAndOrAddPlayer(key.key, key.name);
-  //   const root = this.app.getRootNav();
-  //   root.setRoot(TabsPage);
-  // }
-
   presentToast(text:string) {
     let toast = this.toastCtrl.create({
       message: text,
       duration: 3000,
-      position: 'middle'
+      position: 'top'
     });
 
     toast.onDidDismiss(() => {
