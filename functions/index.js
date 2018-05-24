@@ -2,59 +2,38 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
 // Create and Deploy Your First Cloud Functions
 // https://firebase.google.com/docs/functions/write-firebase-functions
 
 // Calculate score
-exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matchid}').onWrite(event => {
+exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matchid}').onCreate((snap, context) => {
+  const competitionid = context.params.competitionid;
+  const matchid = context.params.matchid;
 
-  // When the data is deleted.
-  if (!event.data.exists()) {
-    const snapshot = event.data;
-    const match = event.data.previous.val();
-    const match_path = snapshot._path.replace('/matches/','');
-    const teams = match.teams;
-    const points = match.points;
-    const competition_id = match_path.split('/')[0];
-
-    console.log("Match " + match_path + " got deleted.")
-    console.log(match);
-
-    onDelete(match_path, teams, points, competition_id);
-
-    return;
-  }
-  // Catch additional tries to trigger the write event.
-  if (event.data.previous.exists()) {
-    console.log("Calculation already done. Not starting again.")
-    return;
-  }
-
-  const snapshot = event.data;
-  console.log(snapshot);
-  const match = event.data.val();
+  const snapshot = snap;
+  const match = snap.val();
   console.log(match);
-  const match_path = snapshot._path.replace('/matches/','');
+  const match_path = competitionid + '/' + matchid;
   const created_at = match.created_at;
-  const competition_id = match_path.split('/')[0];
   const scoreTeam1 = Number(match.scores.team1);
   const scoreTeam2 = Number(match.scores.team2);  
   const teams = match.teams;
   const constant = 60;
   const scoreDifference = Math.abs(scoreTeam1 - scoreTeam2);
-  const pointsToWin = constant + scoreDifference;
+  const scoreDifferenceCapped = Math.min(Math.max(scoreDifference, 0), 10);
+  const pointsToWin = constant + scoreDifferenceCapped;
 
   var teamRankings = [];
-
-  console.log(match);
+  var teamOnevsTwo = 0;
 
   getTeamRanks();
 
   function getTeamRanks() {
     var totalTeams = 0;    
     var averageTeamPoints = [];
+    var amountOfPlayers = [];
     
     Object.keys(teams).forEach(function(team) {
       var totalTeamPoints = 0;
@@ -62,7 +41,7 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
       var teamRanking = [];
 
       Object.keys(teams[team]).forEach(function(player) {
-        return admin.database().ref('/rank/' + competition_id + '/' + teams[team][player].id).once('value').then(function(snapshot) {                
+        return admin.database().ref('/rank/' + competitionid + '/' + teams[team][player].id).once('value').then(function(snapshot) {                
           let rank = Number(snapshot.val().rank);
           let username = teams[team][player].username;
           let id = teams[team][player].id;
@@ -73,6 +52,7 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
           console.log(match_path + " " + username + " " + rank + " (" + totalTeamPlayers + "/" + Object.keys(teams[team]).length + ")");
           
           if (totalTeamPlayers == Object.keys(teams[team]).length) {
+            amountOfPlayers.push(totalTeamPlayers);
             totalTeams++;
             console.log(match_path + " " + team + " average " + totalTeamPoints / Object.keys(teams[team]).length);
             teamRankings.push(teamRanking);
@@ -80,6 +60,17 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
           }
 
           if (totalTeams == Object.keys(teams).length) {
+            if (amountOfPlayers[0] > amountOfPlayers[1]) {
+              teamOnevsTwo = 1;
+              let previousPoints = averageTeamPoints[0];
+              averageTeamPoints[0] = averageTeamPoints[0] * 1.15;
+              console.log(match_path + " team1 2v1 strength adjustment " + previousPoints + " * 1.15 = " + averageTeamPoints[0]);
+            } else if (amountOfPlayers[1] > amountOfPlayers[0]) {
+              teamOnevsTwo = 2;
+              let previousPoints = averageTeamPoints[1];
+              averageTeamPoints[1] = averageTeamPoints[1] * 1.15;
+              console.log(match_path + " team2 2v1 strength adjustment " + previousPoints + " * 1.15 = " + averageTeamPoints[1]);
+            }
             winExpectation(averageTeamPoints);
           }
         })        
@@ -95,8 +86,11 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
     strengthDifference = Math.abs(Number(averageTeamPoints[0]) - Number(averageTeamPoints[1]));
     strengthDifference = Math.min(Math.max(strengthDifference, 0), 400);
     winExpectation = -0.000003 * (strengthDifference * strengthDifference) + 0.0023 * strengthDifference + 0.5;
-    console.log(match_path + " Point pool " + pointsToWin + " (" + constant + " + score difference " + scoreDifference + ")");
-
+    if (scoreDifference > 10) {
+      console.log(match_path + " Point pool " + pointsToWin + " (" + constant + " + score difference maxed at " + scoreDifferenceCapped + "(was " + scoreDifference + "))");
+    } else {
+      console.log(match_path + " Point pool " + pointsToWin + " (" + constant + " + score difference " + scoreDifferenceCapped + ")");
+    }
     setMultiplicationValues(strengthDifference, winExpectation, averageTeamPoints);
   }
 
@@ -168,6 +162,11 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
   }
 
   function updatePlayerRanking(pointsChanged) {
+    if (teamOnevsTwo == 1) {
+      pointsChanged[0] = pointsChanged[0] / 2;
+    } else if (teamOnevsTwo == 2) {
+      pointsChanged[1] = pointsChanged[1] / 2;
+    }
     Object.keys(teams).forEach(function(team, key) {
       Object.keys(teams[team]).forEach(function(player, key2) {
         let id = teams[team][player].id;
@@ -183,7 +182,7 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
         })
         let status = pointsChanged[key] > 0 ? 'won' : 'lost';
         admin.database().ref('/users/' + id + '/matches/' + match_path).set(status);
-        admin.database().ref('/rank/' + competition_id + '/' + id + '/rank').transaction(function(currentRank) {
+        admin.database().ref('/rank/' + competitionid + '/' + id + '/rank').transaction(function(currentRank) {
           let updatedRank = currentRank + pointsChanged[key];
           return updatedRank;
         });
@@ -191,20 +190,52 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
     })
   }
 
-  function onDelete(match_path, teams, points, competition_id) {
+  return 0;
+
+});
+
+exports.removePoints = functions.database.ref('/matches/{competitionid}/{matchid}').onDelete((snap, context) => {
+  // When the data is deleted.
+  const competitionid = context.params.competitionid;
+  const matchid = context.params.matchid;
+  const snapshot = snap;
+  const match = snap.val();
+  const match_path = competitionid + '/' + matchid;
+  const teams = match.teams;
+  const points = match.points;
+
+  console.log("Match " + match_path + " got deleted.")
+  console.log(match);
+
+  onDelete(match_path, teams, points, competitionid);
+
+  return 0;
+
+  function onDelete(match_path, teams, points, competitionid) {
+    if (teams.team1 < teams.team2) {
+      console.log(match_path + " 1v2");
+      points.team2 = points.team2 / 2;
+    } else if (teams.team2 < teams.team1) {
+      console.log(match_path + " 2v1");
+      points.team1 = points.team1 / 2;
+    }
+
     Object.keys(teams).forEach(function(team, key) {
       Object.keys(teams[team]).forEach(function(player, key2) {
         let id = teams[team][player].id;
         let username = teams[team][player].username;
+        let oldRank = 0;
+        let change = Number(points[team]);
         
         return admin.database().ref('/users/' + id).once('value').then(function(snapshot) {
-          admin.database().ref('/ranking/' + id + '/' + match_path).remove()
           admin.database().ref('/users/' + id + '/matches/' + match_path).remove()
-          admin.database().ref('/rank/' + competition_id + '/' + id + '/rank').transaction(function(currentRank) {
-            let oldRank = currentRank - Number(points[team]);
-            return oldRank;
+          admin.database().ref('/ranking/' + id + '/' + match_path).remove()
+          admin.database().ref('/rank/' + competitionid + '/' + id + '/rank').transaction(function(currentRank) {
+            oldRank = currentRank;
+            let newRank = currentRank - change;
+            return newRank;
           }, function(error, committed, snapshot) {
-            console.log(match_path + " " + id + " " + username + " (" + points[team] + " refunded) = ", snapshot.val());
+            console.log(match_path + " " + id + " " + username + " " + oldRank + " (refund " + change * -1 + ") = ", snapshot.val());
           });
         })
 
@@ -212,62 +243,44 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
     })
 
   }
-
-  return;
-
+  
+  return 0;
 });
 
-exports.setDefaultRank = functions.database.ref('/rank/{competitionid}/{userid}').onWrite(event => {
-  const snapshot = event.data;
-  const user = event.data.val();
-  console.log(user);
+exports.setDefaultRank = functions.database.ref('/rank/{competitionid}/{userid}').onCreate((snap, context) => {
+  const competitionid = context.params.competitionid;
+  const userid = context.params.userid;
+  
+  const snapshot = snap;
+  const user = snap.val();
   const path = snapshot._path.replace('/rank/','');
-  console.log(path);
-
-  // When the data is deleted.
-  if (!event.data.exists()) {
-    console.log(path + "/" + username + " got deleted.")
-    return;
-  }
-
-  // Catch additional tries to trigger the write event.
-  if (event.data.previous.exists()) {
-    console.log("Default rank already set. Not setting again.")
-    return;
-  }
 
   admin.database().ref('/rank/' + path + '/rank').transaction(function(currentRank) {
     currentRank = 1000;
     return currentRank;
   }, function(error, committed, snapshot) {
-    console.log("Default rank is set. Rank is now ", snapshot.val());
+    console.log(path + " created")
+    console.log(user.username + " default rank is set at ", snapshot.val());
   });
 
-  return;
+  admin.database().ref('/ranking/' + userid + '/' + competitionid + '/' + 'Default').set({
+    "timestamp": admin.database.ServerValue.TIMESTAMP,
+    "change": 1000,
+    "previous": 1000,
+    "new": 1000,
+    "username": user.username
+  })
+
+  return 0;
 
 });
 
-
-// TODO: Fix this. Now it triggers everytime a user is updated, which is every match. It shouldn't trigger so often.
-// exports.addUser = functions.database.ref('/users/{userid}').onWrite(event => {
-//   const snapshot = event.data;
-//   const user = event.data.val();
-//   const user_id = snapshot._path.replace('/users/','');
-
-//   // When the data is deleted.
-//   if (!event.data.exists()) {
-//     console.log("Player " + user_id + " got deleted.")
-//     return;
-//   }
-
-//   // Catch additional tries to trigger the write event.
-//   if (event.data.previous.exists()) {
-//     console.log("Calculation already done. Not starting again.")
-//     return;
-//   }
-
-//   admin.database().ref('/users/' + user_id + '/rank').set(1000);
-
-//   return;
-
-// });
+exports.removeDefaultRank = functions.database.ref('/rank/{competitionid}/{userid}').onDelete((snap, context) => {
+  const snapshot = snap;
+  const user = snap.val();
+  const path = snapshot._path.replace('/rank/','');
+  console.log(path);
+  console.log(path + "/" + snapshot._data + " got deleted.")
+  
+  return 0;
+});

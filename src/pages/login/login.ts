@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, ToastController } from 'ionic-angular';
+import { NavController, NavParams, ToastController, App } from 'ionic-angular';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { TabsPage } from '../tabs/tabs';
+import { MyApp } from '../../app/app.component';
+import firebase from 'firebase';
 // import { AuthProviders, AuthMethods, AngularFire } from 'angularfire2';
 
 /*
@@ -26,8 +29,19 @@ export class LoginPage {
     public navCtrl: NavController, 
     public navParams: NavParams, 
     private afAuth: AngularFireAuth,
-    private toastCtrl: ToastController
-  ) {}
+    private toastCtrl: ToastController,
+    private app: App,
+  ) {
+    this.registered = this.navParams.get('isLogin');
+  }
+
+  ngOnInit() {
+    if (this.registered) {
+      this.switchToLogin();
+    } else {
+      this.switchToRegister();
+    }
+  }
 
   submit() {
     if (this.registered) {
@@ -40,33 +54,33 @@ export class LoginPage {
   login() {
     this.afAuth.auth.signInWithEmailAndPassword(this.signupData.email, this.signupData.password)
       .then((response) => {
-        console.log('Login success');
-        console.log(response);
+        this.presentToast('Successfully logged in');
+        // console.log(response);
+        setTimeout(() => {
+          const root = this.app.getRootNav();
+          root.setRoot(MyApp);
+        }, 100);
 
-        let currentuser = {
-          email: response.auth.email,
-          picture: response.auth.photoURL
-        };
-        console.log(currentuser);
     }).catch((error) => {
       this.presentToast(error.message);
     })
   }
 
   register() {
-    console.log("Register");
     if (this.signupData.password !== this.signupData.passwordRetyped) {
       this.presentToast("Your password and re-entered password do not match.")
-      console.log(this.signupData.password);
-      console.log(this.signupData.passwordRetyped);
     } else {
-      this.afAuth.auth.createUserWithEmailAndPassword(this.signupData.email, this.signupData.password)
+      let credential = firebase.auth.EmailAuthProvider.credential(this.signupData.email, this.signupData.password)
+      this.afAuth.auth.currentUser.linkWithCredential(credential)
       .then(auth => {
         // Could do something with the Auth-Response
-        console.log(auth);
+        this.presentToast('Successfully registered');
+        setTimeout(() => {
+          const root = this.app.getRootNav();
+          root.setRoot(MyApp);
+        }, 100);
       })
       .catch(err => {
-        // Handle error
         this.presentToast(err.message.toString());
       })
     }
@@ -90,7 +104,6 @@ export class LoginPage {
     });
 
     toast.onDidDismiss(() => {
-      console.log('Dismissed toast');
     });
 
     toast.present();

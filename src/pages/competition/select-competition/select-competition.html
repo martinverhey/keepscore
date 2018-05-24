@@ -18,20 +18,53 @@
 </ion-header>
 
 <ion-content>
+  <div class="action-area">
+    <ion-row>
+      <ion-col text-center>
+        <button ion-button round icon-start (click)="qrScan()">
+          <ion-icon name="qr-scanner"></ion-icon>
+          Scan QR
+        </button>
+      </ion-col>
+      <ion-col text-center>
+        <button ion-button round (click)="pushJoinPage()">Enter code</button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+    </ion-row>
+  </div>
+  <ion-card *ngIf="competitions.length < 1">
+    <ion-card-header>
+      Join competition
+    </ion-card-header>
+    <ion-card-content>
+      Scan the QR-code shown on someone else's competition page or ask them to send the competition code you can enter.
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="competitions.length < 1">
+    <ion-card-header>
+      Create competition
+    </ion-card-header>
+    <ion-card-content>
+      Press <ion-icon name="add"></ion-icon> to create your own competition
+    </ion-card-content>
+  </ion-card>
   <ion-card *ngFor="let competition of competitions">
     <ion-item (click)="closePage(competition.key)">
       <ion-icon name="football" item-left large></ion-icon>
       <ion-row>
         <ion-col>
           <h2>{{competition.name}}</h2>
+          <p>{{competition.username}}</p>
         </ion-col>
       </ion-row>
       <ion-icon name="checkmark" item-right class="selected" large *ngIf="competition.key === competitionID"></ion-icon>
     </ion-item>
   </ion-card>
+
   <ion-row>
     <ion-col text-center>
-      <button ion-button round (click)="pushJoinPage()">Join competition</button>
+      <p *ngIf="showLogin" class="registerText" (click)="pushLogin()">Login</p>
     </ion-col>
   </ion-row>
 </ion-content>

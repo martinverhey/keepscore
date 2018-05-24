@@ -2,7 +2,7 @@ page-results {
   ion-card {
     height: 75px;
   }
-  
+
   .gainColor {
     color: #46b383;
   }
@@ -13,6 +13,25 @@ page-results {
 
   .noChangeColor {
     color: rgba(0, 0, 0, 0.5);
+  }
+
+  [col-13] {
+    flex-basis: 45px;
+    flex-grow: 0;
+  }
+
+  [col-14] {
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  [col-15] {
+    flex-basis: 92px;
+    flex-grow: 0;
+  }
+
+  .card-content {
+    padding: 13px 5px 14px;
   }
 
   ion-col {
@@ -37,6 +56,14 @@ page-results {
   p {
     white-space: nowrap;
     overflow: hidden;
+  }
+
+  .info {
+    height: inherit;
+  }
+
+  .info-card {
+    padding: 13px 16px 14px;
   }
 
 }

@@ -67,7 +67,6 @@ presentToast(text:string) {
   });
 
   toast.onDidDismiss(() => {
-    console.log('Dismissed toast');
   });
 
   toast.present();

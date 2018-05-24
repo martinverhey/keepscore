@@ -4,7 +4,9 @@ import firebase from 'firebase';
 import { Observable } from 'rxjs/Observable';
 import { IPlayer } from '../models/player.models';
 import { ICompetition } from '../models/competition.models';
+import { IRankHistory } from '../models/rank-history.models';
 import 'rxjs/add/operator/do';
+import * as Firebase from 'firebase';
 
 @Injectable()
 export class ApiService {
@@ -21,7 +23,7 @@ export class ApiService {
     }
    }
 
-   getCurrentPlayer(authID): Observable<IPlayer> {
+  getCurrentPlayer(authID): Observable<IPlayer> {
     return this.afDB.object('/users/' + authID)
       .snapshotChanges()
       .map(player => {
@@ -33,6 +35,10 @@ export class ApiService {
       .do(res => this.player = res);
   }
 
+  getPlayerInComp(): Observable<any[]> {
+    return this.afDB.list('/rank/' + this.player.competition_selected + '/' + this.uid, ref => ref.limitToLast(1)).valueChanges();
+  }
+
   set currentPlayer(player) {
     this.player = player;
   }
@@ -42,7 +48,7 @@ export class ApiService {
   }
 
   get username(): string {
-    return this.player.username;
+    return this.player.usernames[this.player.competition_selected];
   }
 
   get competitionSelected(): string {
@@ -69,13 +75,30 @@ export class ApiService {
       }));
     });
   }
+
+  getUsernamesForCurrentUser() {
+    return this.afDB.list('/users/' + this.player.uid + '/usernames/', ref => ref.limitToLast(10))
+    .snapshotChanges()
+    .map(usernames => {
+      return usernames.map(username => ({
+        username: username.payload.val(),
+        key: username.key,
+      }));
+    });
+  }
   
   getMatches() {
     return this.afDB.list('/matches/' + this.player.competition_selected, ref => ref.limitToLast(50)).valueChanges();
   }
+
+  getRankHistory(): Observable<IRankHistory[]> {
+    return this.afDB.list('/ranking/' + this.player.uid + '/' + this.player.competition_selected, ref => ref.limitToLast(7))
+      .valueChanges()
+      .map(res => res as IRankHistory[]);
+  }
   
-  getPlayersInCompetition(competitionid) {
-    return this.afDB.list('/rank/' + competitionid)
+  getPlayersInCompetition() {
+    return this.afDB.list('/rank/' + this.player.competition_selected)
     .snapshotChanges()
     .map(actions => {
       return actions.map(action => ({
@@ -100,9 +123,9 @@ export class ApiService {
     return this.afDB.list('/matches/' + this.player.competition_selected).push(competition);
   }
 
-  saveUser(uid, username) {
+  saveUser(uid) {
     return this.afDB.list('/users').update(uid, {
-      "username": username
+      "created_at": Firebase.database.ServerValue.TIMESTAMP
     })
   }
 
@@ -117,8 +140,11 @@ export class ApiService {
   }
 
   addPlayerToCompetition(key, competitionName) {
+    this.player.competition_selected = key;
     let updateData = {};
     updateData['competition/' + key + '/users/' + this.player.uid] = this.player.username;
+    updateData['users/' + this.player.uid + '/usernames/' + key] = this.player.username;
+    updateData['users/' + this.player.uid + '/username'] = this.player.username;
     updateData['users/' + this.player.uid + '/competition_selected'] = key;
     updateData['users/' + this.player.uid + '/competitions/' + key] = competitionName;
     updateData['rank/' + key + '/' + this.player.uid + '/username'] = this.player.username;
@@ -128,7 +154,7 @@ export class ApiService {
     }
     return firebase.database().ref().root.update(updateData, function(error) {
       if (error) {
-        console.log("Error updating data:", error);
+        console.log("Error batch updating data: ", error);
       }
     });
   }
@@ -136,6 +162,16 @@ export class ApiService {
   switchCompetition(key) {
     firebase.database().ref('users/' + this.player.uid + '/competition_selected').set(key);
     this.player.competition_selected = key;
+    this.switchCurrentUsername();
   }
+
+  switchCurrentUsername() {
+    this.getPlayerInComp().take(1).subscribe(player => {
+      let username =  player[0];
+      this.player.username = username;
+      firebase.database().ref('users/' + this.player.uid + '/username').set(username);
+    })
+  }
+
 
 }

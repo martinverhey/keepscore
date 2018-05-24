@@ -2,9 +2,8 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, ViewController, ToastController } from 'ionic-angular';
 import { SelectCompetitionPage } from '../../competition/select-competition/select-competition';
 import { ApiService } from '../../../providers/api-service';
-import { Subscription } from 'rxjs/Subscription';
 import { Clipboard } from '@ionic-native/clipboard';
-// import { Printer, PrintOptions } from '@ionic-native/printer';
+import { IPlayer } from '../../../models/player.models';
 
 
 /*
@@ -18,10 +17,9 @@ import { Clipboard } from '@ionic-native/clipboard';
   templateUrl: 'competition.html'
 })
 export class CompetitionPage {
-  public amountOfCompetitions: number;
-  private userSubscription: Subscription;
-  private competition: any;
-  private currentCompetitionID: string = "";
+  public player: IPlayer;
+  public competitionName: string;
+  public currentCompetitionID: string = "";
 
   constructor(
     public navCtrl: NavController, 
@@ -33,12 +31,9 @@ export class CompetitionPage {
   ) {}
 
   ngOnInit() {
-    this.competition = this.apiService.currentCompetition;
-    this.currentCompetitionID = this.apiService.player.competition_selected;
-    this.apiService.getCompetitions()
-      .map(competitions => competitions.find(competition => competition.key == this.currentCompetitionID))
-      .take(1)
-      .subscribe(competition => this.competition = competition);
+    this.player = this.apiService.player;
+    this.competitionName = this.player.competitions[this.player.competition_selected];
+    this.currentCompetitionID = this.player.competition_selected;
   }
 
   copyToClipboard() {
@@ -46,7 +41,6 @@ export class CompetitionPage {
     this.presentToast("Copied!");
   }
 
-  // Return to previous page
   dismissModal() {
     this.viewCtrl.dismiss(this);
   }
@@ -59,7 +53,6 @@ export class CompetitionPage {
     });
 
     toast.onDidDismiss(() => {
-      console.log('Dismissed toast');
     });
 
     toast.present();

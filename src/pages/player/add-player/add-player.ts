@@ -26,17 +26,13 @@ export class AddPlayerPage {
   // Return to previous page
   popPage() {
     this.navCtrl.pop();
-    console.log("Pop back to Participants");
   }
 
   savePlayer() {
-    console.log(this.user);
-    console.log(this.user.length);
     if (this.user.length <= 10) {
       this.presentToast('User was added successfully');
       this.popPage();
     } else if (this.user.length > 10) {
-      console.log("Playername too long");
       this.presentToast('Only 10 characters allowed');
     }
   }
@@ -49,7 +45,6 @@ export class AddPlayerPage {
     });
 
     toast.onDidDismiss(() => {
-      console.log('Dismissed toast');
     });
 
     toast.present();

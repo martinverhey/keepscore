@@ -9,7 +9,7 @@
   <ion-navbar>
     <ion-title>Select player(s)</ion-title>
       <ion-buttons start>
-        <button ion-button icon-only color="light" (click)="dismissModal()">
+        <button ion-button icon-only color="light" (click)="cancelModal()">
           Done
         </button>
       </ion-buttons>    
@@ -24,11 +24,11 @@
       <ion-col class="limited-height">
         <ion-item>
           <ion-label>None</ion-label>
-          <ion-radio value="" required (click)="dismissModal()"></ion-radio>
+          <ion-radio value="" required (click)="cancelModal()"></ion-radio>
         </ion-item>
-        <ion-item *ngFor="let player of players | orderBy : ['username']">
+        <ion-item *ngFor="let player of players">
           <ion-label>{{player.username}}</ion-label>
-          <ion-radio value="{{player.username}}" required [disabled]="player.checkedTeam1 || player.checkedTeam2" (click)="dismissModal()"></ion-radio>
+          <ion-radio value="{{player.key}}" required [disabled]="player.checkedTeam1 || player.checkedTeam2" (click)="dismissModal()"></ion-radio>
         </ion-item>
       </ion-col>
     </ion-row>

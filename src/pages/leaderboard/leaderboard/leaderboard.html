@@ -1,6 +1,11 @@
 <ion-header>
   <ion-navbar>
     <ion-title>Leaderboard</ion-title>
+    <ion-buttons start>
+      <button ion-button icon-only color="light" (click)="pushProfile()">
+        <ion-icon name="contact"></ion-icon>
+      </button>
+    </ion-buttons>
     <ion-buttons end>
       <button ion-button icon-only color="light" (click)="pushPage()">
         <ion-icon name="add"></ion-icon>
@@ -31,4 +36,15 @@
       </ion-row>
     </ion-item>
   </ion-list>
+
+  <ion-card *ngIf="!players || players.length == 1" class="info">
+    <ion-card-header>
+      Invite others
+    </ion-card-header>
+    <ion-card-content class="info-card">
+        You need others to compete against. <br />
+        Invite friends or colleagues to join the competition. <br /><br />
+        Head over to the <ion-icon name="trophy"></ion-icon> Competition page and let them follow the instructions.
+    </ion-card-content>
+  </ion-card>
 </ion-content>

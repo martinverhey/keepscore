@@ -22,7 +22,7 @@
 <ion-content>
   <ion-row>
       <ion-col text-center>
-        <h1>{{ competition?.name }}</h1>
+        <h1>{{ competitionName }}</h1>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -33,14 +33,14 @@
     <ion-row>
       <ion-col text-center>
         <h2>Join instructions</h2>
-        <p>Open KeepScore on your phone
-        <br /> Competition > Join > Scan QR</p>
+        <p>Open KeepScore > <ion-icon name="qr-scanner"></ion-icon> Scan QR or<br />
+          Competition > <ion-icon name="swap"></ion-icon> > <ion-icon name="qr-scanner"></ion-icon> Scan QR <br /></p>
         <ion-card>
           <ion-item (click)="copyToClipboard()">
             <ion-icon name="copy" item-left large></ion-icon>
             <ion-row>
               <ion-col>
-                <h2>{{ competition?.key }}</h2>
+                <h2>{{ currentCompetitionID }}</h2>
                 <p>Or copy & send this to a friend</p>
               </ion-col>
             </ion-row>

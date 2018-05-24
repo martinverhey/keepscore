@@ -7,7 +7,12 @@
 <ion-header>
   
     <ion-navbar>
-      <ion-title>Welcome</ion-title>
+      <ion-title>{{competition.name}}</ion-title>
+      <ion-buttons start>
+          <button ion-button icon-only color="light" (click)="cancelModal()">
+            Cancel
+          </button>
+        </ion-buttons>    
     </ion-navbar>
   
   </ion-header>
@@ -19,8 +24,8 @@
         <p>(max 10 characters)</p>
       </ion-col>
     </ion-row>
-    <form (ngSubmit)="loginAnonymous()" #loginForm="ngForm"  class="loginForm">
-      <ion-item>steam
+    <form (ngSubmit)="saveUsername()" #loginForm="ngForm"  class="loginForm">
+      <ion-item>
         <ion-input #input required type="text" name="username" [(ngModel)]="username" placeholder="Name" pattern=".{1,10}"></ion-input>
       </ion-item>
       <ion-row class="loginButton">
@@ -29,6 +34,13 @@
         </ion-col>
       </ion-row>
     </form>
+    <br /><br /><br />
+    <ion-row *ngIf="mistakeMade">
+      <ion-col text-center>
+        <p><b>Players</b></p>
+        <p *ngFor="let player of playerList">{{player}}</p>
+      </ion-col>
+    </ion-row>
     <!-- <ion-row>
       <ion-col text-center>
         <p class="loginText" (click)="openLoginPage()">Login</p>

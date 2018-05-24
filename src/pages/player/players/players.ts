@@ -31,7 +31,6 @@ export class PlayersPage {
 
   pushPage() {
     this.navCtrl.push(AddPlayerPage);
-    console.log("Push 'Add Player' in front");
   }
 
 }

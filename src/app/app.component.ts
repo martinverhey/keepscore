@@ -4,10 +4,10 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { AngularFireAuth } from 'angularfire2/auth';
 
-import { UsernamePage } from "../pages/username/username";
 import { SelectCompetitionPage } from "../pages/competition/select-competition/select-competition";
 import { ApiService } from '../providers/api-service';
 import { TabsPage } from '../pages/tabs/tabs';
+import { AuthService } from '../providers/auth-service';
 
 @Component({
   templateUrl: 'app.html'
@@ -17,6 +17,7 @@ export class MyApp {
 
   constructor(platform: Platform, 
               private afAuth: AngularFireAuth, 
+              private authService: AuthService,
               private apiService: ApiService,
               private splashScreen: SplashScreen,
               private statusBar: StatusBar
@@ -24,14 +25,20 @@ export class MyApp {
     this.afAuth.authState
       .do(auth => {
         if (!auth) {
-          this.rootPage = UsernamePage;
+          this.authService.anonymousLogin();
         }
       })
       .filter(auth => auth ? true : false)
       .switchMap(auth => this.apiService.getCurrentPlayer(auth.uid))
       .subscribe(currentPlayer => {
-        console.log(currentPlayer)
-        if (this.rootPage == UsernamePage || !this.rootPage) {
+        console.log(currentPlayer);
+        // setTimeout(() => {
+        //   setInterval(() => {
+        //     console.log(this.apiService.player.username);
+        //    }, 1000);
+        // }, 1000);
+
+        if (!this.rootPage) {
           if (currentPlayer.competition_selected) {
             this.rootPage = TabsPage;
           } else {

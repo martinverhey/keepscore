@@ -4,7 +4,6 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { QRScanner } from '@ionic-native/qr-scanner';
 import { Clipboard } from '@ionic-native/clipboard';
-// import { Printer } from '@ionic-native/printer';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule, AngularFireDatabase } from 'angularfire2/database';
@@ -32,6 +31,7 @@ import { OrderByPipe } from '../providers/orderBy.pipe';
 import { ArrayFilterPipe } from '../providers/array-filter.pipe';
 import { SearchPipe } from '../providers/search.pipe';
 import { AuthService } from '../providers/auth-service';
+import { ProfilePage } from '../pages/profile/profile';
  
 // AF2 Settings
 export const firebaseConfig = {
@@ -69,6 +69,7 @@ export const firebaseConfig = {
     AddCompetitionPage,
     JoinCompetitionPage,
     CompetitionPage,
+    ProfilePage,
     TabsPage,
     OrderByPipe,
     SearchPipe,
@@ -99,6 +100,7 @@ export const firebaseConfig = {
     AddCompetitionPage,
     JoinCompetitionPage,
     CompetitionPage,
+    ProfilePage,
     TabsPage
   ],
   providers: [
@@ -112,7 +114,6 @@ export const firebaseConfig = {
     SplashScreen,
     AngularFireDatabase,
     Clipboard,
-    // Printer,
     {
       provide: ErrorHandler, useClass: IonicErrorHandler
     }]

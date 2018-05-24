@@ -31,19 +31,17 @@ export class AuthService {
   }
 
   ngOnDestroy() {
-    console.log("AuthService Destroyed")
     if (this.authSub) {
       this.authSub.unsubscribe();
     }
   }
 
-  anonymousLogin(username) {
+  anonymousLogin() {
     return this.afAuth.auth.signInAnonymously().then((response) => {
-      console.log("Successful login:")
-      console.log(response);
+      // console.log(response);
 
-      this.apiService.saveUser(response.uid, username).then((response) => {
-        console.log("Succesfully saved");
+      this.apiService.saveUser(response.uid).then((response) => {
+        // console.log("Succesfully saved");
       });
     })
       .catch(error => this.presentToast(error.message));
@@ -69,7 +67,6 @@ export class AuthService {
     });
 
     toast.onDidDismiss(() => {
-      console.log('Dismissed toast');
     });
 
     toast.present();

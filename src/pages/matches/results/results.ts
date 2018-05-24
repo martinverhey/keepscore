@@ -17,17 +17,20 @@ export class ResultsPage {
   constructor (
     public navCtrl: NavController, 
     private apiService: ApiService,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
   ) { }
 
   ngOnInit() {
     this.presentLoading();
     this.getMatches();
   }
- 
+
   getMatches() {
     this.matchSub = this.apiService.getMatches().subscribe((matches) => {
       this.matches = matches;
+      this.matches.sort(function (a,b) {
+        return b.created_at - a.created_at;
+      })
       this.matches.map(match => {
         match.points.team1Positive = Math.abs(match.points.team1);
         if(match.points.team1 == "") {
@@ -38,7 +41,6 @@ export class ResultsPage {
           match.points.team2Positive = 0;
         }
       })
-      console.log(this.matches);
       this.loader.dismiss();
     });
   }
@@ -65,7 +67,7 @@ export class ResultsPage {
   }
 
   virtualTrack (index, match) {
-  return match.id;
+    return index + "" + match.created_at;
   }
 
   presentLoading() {

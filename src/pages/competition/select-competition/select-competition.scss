@@ -1,3 +1,19 @@
-page-competition {
+page-select-competition {
+	.action-area {
+		height: 90px;
+		padding: 15px;
+	}
 
+	.registerText {
+        color: color($colors, primary);
+		// margin-top: 15vh;
+		margin: 0 auto;
+        position: fixed;
+        bottom: 50px;
+        width: 100%;
+	}
+	
+	.button {
+		font-size: 1.5rem;
+	}
 }

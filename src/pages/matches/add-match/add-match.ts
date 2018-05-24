@@ -15,10 +15,10 @@ import { Team } from './team.component';
 })
 
 export class AddMatchPage implements OnInit {
-  @Input() player1: string = "";
-  @Input() player2: string = "";
-  @Input() player3: string = "";
-  @Input() player4: string = "";
+  @Input() player1: any = [];
+  @Input() player2: any = [];
+  @Input() player3: any = [];
+  @Input() player4: any = [];
 
   matches: any[];
   players: any;
@@ -77,19 +77,14 @@ export class AddMatchPage implements OnInit {
       if (player.checkedTeam1 && !player.checkedTeam2) {
         this.team1.setPlayers(player.key, player.username);
         this.playerCount++;
-      }
-      else if (player.checkedTeam2 && !player.checkedTeam1) {
+      } else if (player.checkedTeam2 && !player.checkedTeam1) {
         this.team2.setPlayers(player.key, player.username);
         this.playerCount++;
-      }
-      else if (player.checkedTeam1 && player.checkedTeam2) {
+      } else if (player.checkedTeam1 && player.checkedTeam2) {
         playerSelectedMultipleTimes = true;
-      }
-      else if (!player.checkedTeam1 && !player.checkedTeam2) {
+      } else if (!player.checkedTeam1 && !player.checkedTeam2) {
         // Not selected
-      }
-      else {
-        console.log("Something went wrong.");
+      } else {
         console.dir(this.players);
       };
     }
@@ -100,8 +95,6 @@ export class AddMatchPage implements OnInit {
       this.presentToast('A player can\'t be in both teams at ones.');
     } else if (this.team1.getPlayers().length < 1 || this.team2.getPlayers().length < 1) {
       formMistake = true;
-      console.log(this.team1);
-      console.log(this.team2);
       this.presentToast('Select at least one competitor on each side.');
     } else if (this.score1 < 0 || this.score2 < 0) {
       formMistake = true;
@@ -131,7 +124,7 @@ export class AddMatchPage implements OnInit {
   }
 
   getUsers() {
-      this.userSub = this.apiService.getPlayersInCompetition(this.apiService.player.competition_selected).take(1).subscribe(players => {
+    this.userSub = this.apiService.getPlayersInCompetition().subscribe(players => {
       for (let player of players) {
         player.checkedTeam1 = false;
         player.checkedTeam2 = false;
@@ -164,7 +157,6 @@ export class AddMatchPage implements OnInit {
         team2: ""
       }
     }
-    console.log(match);
     this.apiService.saveMatch(match);
     this.presentToast('Match was added successfully');
     this.popPage();
@@ -178,7 +170,6 @@ export class AddMatchPage implements OnInit {
     });
 
     toast.onDidDismiss(() => {
-      console.log('Dismissed toast');
     });
 
     toast.present();
@@ -187,39 +178,47 @@ export class AddMatchPage implements OnInit {
   selectPlayerModal(player) {
     let modal;
     if (player == "player1") {
-      this.checkPlayer(this.player1, 1, false);
+      if (this.player1.key) {
+        this.checkPlayer(this.player1.key, 1, false);
+      }
       modal = this.modalCtrl.create(PlayerListPage, {players: this.players, selectedPlayer: this.player1})
       modal.onDidDismiss(data => {
         if (data != null) {
           this.player1 = data.selectedPlayer;
-          this.checkPlayer(this.player1, 1, true);
+          this.checkPlayer(this.player1.key, 1, true);
         }
       })
     } else if (player == "player3") {
-      this.checkPlayer(this.player3, 1, false);
+      if (this.player3.key) {
+        this.checkPlayer(this.player3.key, 1, false);
+      }
       modal = this.modalCtrl.create(PlayerListPage, {players: this.players, selectedPlayer: this.player3})
       modal.onDidDismiss(data => {
         if (data != null) {
           this.player3 = data.selectedPlayer;
-          this.checkPlayer(this.player3, 1, true);
+          this.checkPlayer(this.player3.key, 1, true);
         }
       })
     } else if (player == "player2") {
-      this.checkPlayer(this.player2, 2, false);
+      if (this.player2.key) {
+        this.checkPlayer(this.player2.key, 2, false);
+      }
       modal = this.modalCtrl.create(PlayerListPage, {players: this.players, selectedPlayer: this.player2})
       modal.onDidDismiss(data => {
         if (data != null) {
           this.player2 = data.selectedPlayer;
-          this.checkPlayer(this.player2, 2, true);
+          this.checkPlayer(this.player2.key, 2, true);
         }
       })
     } else if (player == "player4") {
-      this.checkPlayer(this.player4, 2, false);
+      if (this.player4.key) {
+        this.checkPlayer(this.player4.key, 2, false);
+      }
       modal = this.modalCtrl.create(PlayerListPage, {players: this.players, selectedPlayer: this.player4})
       modal.onDidDismiss(data => {
         if (data != null) {
           this.player4 = data.selectedPlayer;
-          this.checkPlayer(this.player4, 2, true);
+          this.checkPlayer(this.player4.key, 2, true);
         }
       })
     }
@@ -228,7 +227,7 @@ export class AddMatchPage implements OnInit {
 
   checkPlayer(selectedPlayer, team, check) {
     for (let player of this.players) {
-      if (player.username == selectedPlayer) {
+      if (player.key == selectedPlayer) {
         if (team == 1) {
           if (check == true) {
             player.checkedTeam1 = true;
@@ -243,7 +242,7 @@ export class AddMatchPage implements OnInit {
           }
         }
       }
-    }    
+    }
   }
 
   virtualTrack (index, match) {

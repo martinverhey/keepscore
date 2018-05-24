@@ -12,8 +12,8 @@ import { NavController, NavParams, ViewController } from 'ionic-angular';
   templateUrl: 'player-list.html'
 })
 export class PlayerListPage {
-  players: any;
-  selectedPlayer: string = "";
+  players: any = [];
+  selectedPlayer: any = [];
 
   constructor(
     public navCtrl: NavController, 
@@ -21,11 +21,25 @@ export class PlayerListPage {
     public navParams: NavParams
   ) {
     this.players = this.navParams.get('players');
+    this.players = this.players.sort(function (a,b) {
+      return a.username.localeCompare(b.username);
+    })
     this.selectedPlayer = this.navParams.get('selectedPlayer');
   }
 
-  dismissModal() {
+  ngOnInit() {
+  }
+
+  cancelModal() {
+    if (!this.selectedPlayer) {
+      this.selectedPlayer = [];
+    }
     this.viewCtrl.dismiss(this);
   }
 
+  dismissModal() {
+      let foundPlayer = this.players.find(player => player.key == this.selectedPlayer);
+      this.selectedPlayer = foundPlayer;
+      this.viewCtrl.dismiss(this);
+  }
 }

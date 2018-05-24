@@ -20,10 +20,10 @@
       <h2>Team 1</h2>
     </ion-item>
     <ion-item>
-      <div [ngClass]="{'text-placeholder': !player1}" (click)="selectPlayerModal('player1')">{{player1 || 'Player 1 *'}}</div>
+      <div [ngClass]="{'text-placeholder': !player1.username}" (click)="selectPlayerModal('player1')">{{player1.username || 'Player 1 *'}}</div>
     </ion-item>
     <ion-item>
-      <div [ngClass]="{'text-placeholder': !player3}" (click)="selectPlayerModal('player3')">{{player3 || 'Player 3'}}</div>
+      <div [ngClass]="{'text-placeholder': !player3.username}" (click)="selectPlayerModal('player3')">{{player3.username || 'Player 3'}}</div>
     </ion-item>
   </ion-col>
   <ion-col>
@@ -31,10 +31,10 @@
       <h2>Team 2</h2>
     </ion-item>
     <ion-item>
-      <div [ngClass]="{'text-placeholder': !player2}" (click)="selectPlayerModal('player2')">{{player2 || 'Player 2 *'}}</div>
+      <div [ngClass]="{'text-placeholder': !player2.username}" (click)="selectPlayerModal('player2')">{{player2.username || 'Player 2 *'}}</div>
     </ion-item>
     <ion-item>
-      <div [ngClass]="{'text-placeholder': !player4}" (click)="selectPlayerModal('player4')">{{player4 || 'Player 4'}}</div>
+      <div [ngClass]="{'text-placeholder': !player4.username}" (click)="selectPlayerModal('player4')">{{player4.username || 'Player 4'}}</div>
     </ion-item>
   </ion-col>
 </ion-row>

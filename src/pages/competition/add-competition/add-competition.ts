@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
-import { App, NavController, NavParams } from 'ionic-angular';
+import { App, NavController, NavParams, ModalController } from 'ionic-angular';
 import { ToastController } from 'ionic-angular';
 import { ApiService } from '../../../providers/api-service';
 import { TabsPage } from '../../tabs/tabs';
+import { UsernamePage } from '../../username/username';
+import { MyApp } from '../../../app/app.component';
+import { ICompetition } from '../../../models/competition.models';
 
 /*
   Generated class for the AddPlayer page.
@@ -17,13 +20,15 @@ import { TabsPage } from '../../tabs/tabs';
 export class AddCompetitionPage {
   public name: string;
   private uid: string;
+  private competition: ICompetition;
 
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams, 
     private apiService: ApiService, 
     private toastCtrl: ToastController,
-    private app: App
+    private app: App,
+    private modalCtrl: ModalController
   ) {}
 
   ngOnInit() {
@@ -33,23 +38,65 @@ export class AddCompetitionPage {
   // Return to previous page
   popPage() {
     this.navCtrl.pop();
-    console.log("Pop back to Competitions");
   }
 
   save() {
     if (this.name.length <= 20) {
       this.apiService.saveCompetition(this.name, this.uid).then((item) => {
-        console.log(item)
-        this.apiService.addPlayerToCompetition(item.key, this.name);
+        this.competition = {
+          name: this.name,
+          key: item.key,
+          users: []
+        }
+        let modal;
+        modal = this.modalCtrl.create(UsernamePage, {competition: this.competition})
+        modal.onDidDismiss(data => {
+          if (data) {
+            this.apiService.addPlayerToCompetition(item.key, this.name).then(() => {
+              this.presentToast('Successfully created: ' + this.name);
+              setTimeout(() => {
+                const root = this.app.getRootNav();
+                root.setRoot(MyApp);
+              }, 100);
+            });
+          }
+        })
+        modal.present();
       });
-      this.presentToast('Competition was added successfully');
-      setTimeout(() => {
-        const root = this.app.getRootNav();
-        root.setRoot(TabsPage);
-      }, 100);
     } else if (this.name.length > 20) {
-      console.log("Competition name too long");
       this.presentToast('Only 20 characters allowed');
+    }
+  }
+
+  joinCompetition(competitionID) {
+    if (competitionID.length == 20) {
+      this.apiService.getCompetition(competitionID).take(1).subscribe(competition => {
+        if (competition) {
+          if (!competition.users[this.apiService.player.uid]) {
+            let modal;
+            modal = this.modalCtrl.create(UsernamePage, {competition: competition})
+            modal.onDidDismiss(data => {
+              if (data) {
+                this.apiService.addPlayerToCompetition(competitionID, competition.name).then(() => {
+                  this.presentToast('Successfully joined: ' + competition.name);
+                  setTimeout(() => {
+                    const root = this.app.getRootNav();
+                    root.setRoot(MyApp);
+                  }, 100);
+                });
+              }
+            })
+            modal.present();
+          }
+          else {
+            this.presentToast('You are already in this competition.');
+          }
+        } else {
+          this.presentToast('Competition does not exist.');
+        }
+      })
+    } else {
+      this.presentToast('Competition does not exist.');
     }
   }
 
@@ -61,7 +108,6 @@ export class AddCompetitionPage {
     });
 
     toast.onDidDismiss(() => {
-      console.log('Dismissed toast');
     });
 
     toast.present();
