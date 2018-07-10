@@ -63,13 +63,13 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
             if (amountOfPlayers[0] > amountOfPlayers[1]) {
               teamOnevsTwo = 1;
               let previousPoints = averageTeamPoints[0];
-              averageTeamPoints[0] = averageTeamPoints[0] * 1.15;
-              console.log(match_path + " team1 2v1 strength adjustment " + previousPoints + " * 1.15 = " + averageTeamPoints[0]);
+              averageTeamPoints[0] = averageTeamPoints[0] * 1.25;
+              console.log(match_path + " team1 2v1 strength adjustment " + previousPoints + " * 1.25 = " + averageTeamPoints[0]);
             } else if (amountOfPlayers[1] > amountOfPlayers[0]) {
               teamOnevsTwo = 2;
               let previousPoints = averageTeamPoints[1];
-              averageTeamPoints[1] = averageTeamPoints[1] * 1.15;
-              console.log(match_path + " team2 2v1 strength adjustment " + previousPoints + " * 1.15 = " + averageTeamPoints[1]);
+              averageTeamPoints[1] = averageTeamPoints[1] * 1.25;
+              console.log(match_path + " team2 2v1 strength adjustment " + previousPoints + " * 1.25 = " + averageTeamPoints[1]);
             }
             winExpectation(averageTeamPoints);
           }

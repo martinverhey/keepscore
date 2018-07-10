@@ -3,7 +3,7 @@ import { Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { AngularFireAuth } from 'angularfire2/auth';
-
+import firebase from 'firebase';
 import { SelectCompetitionPage } from "../pages/competition/select-competition/select-competition";
 import { ApiService } from '../providers/api-service';
 import { TabsPage } from '../pages/tabs/tabs';

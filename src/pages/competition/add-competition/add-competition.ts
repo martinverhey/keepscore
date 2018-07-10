@@ -57,7 +57,7 @@ export class AddCompetitionPage {
               setTimeout(() => {
                 const root = this.app.getRootNav();
                 root.setRoot(MyApp);
-              }, 100);
+              }, 500);
             });
           }
         })
@@ -82,7 +82,7 @@ export class AddCompetitionPage {
                   setTimeout(() => {
                     const root = this.app.getRootNav();
                     root.setRoot(MyApp);
-                  }, 100);
+                  }, 500);
                 });
               }
             })
