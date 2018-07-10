@@ -1,0 +1,69 @@
+page-results {
+  ion-card {
+    height: 75px;
+  }
+
+  .gainColor {
+    color: #46b383;
+  }
+
+  .loseColor {
+    color: #b34646;
+  }
+
+  .noChangeColor {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  [col-13] {
+    flex-basis: 45px;
+    flex-grow: 0;
+  }
+
+  [col-14] {
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  [col-15] {
+    flex-basis: 92px;
+    flex-grow: 0;
+  }
+
+  .card-content {
+    padding: 13px 5px 14px;
+  }
+
+  ion-col {
+  padding: 5px 0px;
+  }
+
+  // .virtual-scroll > .virtual-position:first-child {
+  //   transform: translate3d(0px, 0px, 0px) !important;
+  // }
+
+  // .virtual-scroll .virtual-position, .virtual-scroll .virtual-position.item {
+    // nothing yet, but maybe this can help for the positioning. Maybe also with :first-child, as in the one above.
+  // }
+
+ ion-col[width-12] {
+    -webkit-flex: 0 0 12%;
+    -ms-flex: 0 0 12%;
+    flex: 0 0 12%;
+    max-width: 12%;
+  }
+
+  p {
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .info {
+    height: inherit;
+  }
+
+  .info-card {
+    padding: 13px 16px 14px;
+  }
+
+}

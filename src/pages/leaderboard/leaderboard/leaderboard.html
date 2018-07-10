@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Leaderboard</ion-title>
+    <ion-buttons start>
+      <button ion-button icon-only color="light" (click)="pushProfile()">
+        <ion-icon name="contact"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-buttons end>
+      <button ion-button icon-only color="light" (click)="pushPage()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let player of players; let i = index">
+      <ion-row [class.selected]="user.uid === player.key">
+        <ion-col text-left align-self-center col-1>
+          <ion-icon name="trophy" item-left *ngIf="i == 0" [style.color]="firstPlace"></ion-icon>
+          <ion-icon name="trophy" item-left *ngIf="i == 1" [style.color]="secondPlace"></ion-icon>
+          <ion-icon name="trophy" item-left *ngIf="i == 2" [style.color]="thirdPlace"></ion-icon>
+          <ion-icon name="trophy" item-left *ngIf="i > 2" [style.color]="otherPlaces"></ion-icon>
+        </ion-col>
+        <ion-col align-self-center col-2>
+          {{i + 1}}.
+        </ion-col>
+        <ion-col col-7 align-self-center class="overflow-hidden">
+          {{player.username}}
+        </ion-col>
+        <ion-col text-right align-self-center col-2>
+           {{player.rank}}
+        </ion-col>
+      </ion-row>
+    </ion-item>
+  </ion-list>
+
+  <ion-card *ngIf="!players || players.length == 1" class="info">
+    <ion-card-header>
+      Invite others
+    </ion-card-header>
+    <ion-card-content class="info-card">
+        You need others to compete against. <br />
+        Invite friends or colleagues to join the competition. <br /><br />
+        Head over to the <ion-icon name="trophy"></ion-icon> Competition page and let them follow the instructions.
+    </ion-card-content>
+  </ion-card>
+</ion-content>

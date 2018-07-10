@@ -1,0 +1,61 @@
+<!--
+  Generated template for the ProfilePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Profile</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <p text-center>Hi, {{playerName}}</p>
+
+  <div class="action-area" text-center>
+    <ion-row>
+      <ion-col *ngIf="isAnonymous">
+        Register to save your data to an account.
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col text-center>
+        <button *ngIf="isAnonymous" ion-button round (click)="pushLogin()">Register</button>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <ion-card>
+    <ion-card-header>
+      Statistics
+    </ion-card-header>
+    <ion-card-content>
+      <ion-row>
+        <ion-col>Total</ion-col>
+        <ion-col>Wins</ion-col>
+        <ion-col>Losses</ion-col>
+        <ion-col>Win %</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>{{wins + losses}}</ion-col>
+        <ion-col>{{wins}}</ion-col>
+        <ion-col>{{losses}}</ion-col>
+        <ion-col>{{winRate}} %</ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      History
+    </ion-card-header>
+    <ion-card-content>
+      <canvas #lineCanvas></canvas>
+    </ion-card-content>
+  </ion-card>
+  
+</ion-content>

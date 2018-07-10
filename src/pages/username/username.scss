@@ -1,0 +1,19 @@
+page-username {
+    .loginHeader {
+        margin-top: 35%;
+    }
+    .loginForm {
+        margin-top: 15%;
+        text-align: center;
+    }
+    .loginButton {
+        margin-top: 20%;
+    }
+    .text-input {
+        text-align: center;
+    }
+    .loginText {
+        color: color($colors, primary);
+        margin-top: 15vh;
+    }
+}
