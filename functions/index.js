@@ -180,7 +180,7 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
           "new": newRank,
           "username": username
         })
-        let status = pointsChanged[key] > 0 ? 'won' : 'lost';
+        let status = pointsChanged[key] > 0 ? 'won' : pointsChanged[key] == 0 ? 'draw' : 'lost';
         admin.database().ref('/users/' + id + '/matches/' + match_path).set(status);
         admin.database().ref('/rank/' + competitionid + '/' + id + '/rank').transaction(function(currentRank) {
           let updatedRank = currentRank + pointsChanged[key];

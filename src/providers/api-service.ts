@@ -88,13 +88,25 @@ export class ApiService {
   }
   
   getMatches() {
-    return this.afDB.list('/matches/' + this.player.competition_selected, ref => ref.limitToLast(50)).valueChanges();
+    return this.afDB.list('/matches/' + this.player.competition_selected, ref => ref.limitToLast(50))
+    .snapshotChanges()
+    .map(matches => {
+      return matches.map(match => ({
+        key: match.key, ...match.payload.val()
+      }));
+    });
   }
 
   getRankHistory(): Observable<IRankHistory[]> {
     return this.afDB.list('/ranking/' + this.player.uid + '/' + this.player.competition_selected, ref => ref.limitToLast(7))
       .valueChanges()
       .map(res => res as IRankHistory[]);
+  }
+
+  getMatchHistory(matchid, uid): Observable<IRankHistory> {
+    return this.afDB.object('/ranking/' + uid + '/' + this.player.competition_selected + '/' + matchid)
+      .valueChanges()
+      .map(res => res as IRankHistory);
   }
   
   getPlayersInCompetition() {
@@ -121,6 +133,10 @@ export class ApiService {
 
   saveMatch(competition) {
     return this.afDB.list('/matches/' + this.player.competition_selected).push(competition);
+  }
+
+  removeMatch(match) {
+    return this.afDB.list('/matches/' + this.player.competition_selected).remove(match);
   }
 
   saveUser(uid) {

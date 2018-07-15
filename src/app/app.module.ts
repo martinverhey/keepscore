@@ -32,6 +32,7 @@ import { ArrayFilterPipe } from '../providers/array-filter.pipe';
 import { SearchPipe } from '../providers/search.pipe';
 import { AuthService } from '../providers/auth-service';
 import { ProfilePage } from '../pages/profile/profile';
+import { MatchInfoPage } from '../pages/matches/match-info/match-info';
  
 // AF2 Settings
 export const firebaseConfig = {
@@ -71,6 +72,7 @@ export const firebaseConfig = {
     CompetitionPage,
     ProfilePage,
     TabsPage,
+    MatchInfoPage,
     OrderByPipe,
     SearchPipe,
     ArrayFilterPipe
@@ -101,7 +103,8 @@ export const firebaseConfig = {
     JoinCompetitionPage,
     CompetitionPage,
     ProfilePage,
-    TabsPage
+    TabsPage,
+    MatchInfoPage
   ],
   providers: [
     ApiService,

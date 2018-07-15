@@ -1,7 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams } from 'ionic-angular';
 import { LoginPage } from '../login/login';
-import { RegisterPage } from '../register/register';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { ApiService } from '../../providers/api-service';
 import { IPlayer } from '../../models/player.models';
@@ -30,6 +29,7 @@ export class ProfilePage {
   public winRate: number = 0;
   public wins: number = 0;
   public losses: number = 0;
+  public draws: number = 0;
   public history: number[];
   public currentPoints: number = 1000;
 
@@ -49,6 +49,9 @@ export class ProfilePage {
       })
       .map(items => items.map(item => item.new))
       .subscribe((history) => {
+        Object.keys(history).forEach(rank => {
+          history[rank] = Math.floor(history[rank]);
+        })
         this.history = history;
         if (this.history.length > 0) {
           this.currentPoints = Math.floor(this.history[this.history.length - 1]);
@@ -108,21 +111,24 @@ export class ProfilePage {
     if (history) {
       this.wins = 0;
       this.losses = 0;
+      this.draws = 0;
       Object.keys(history).forEach(key => {
         if (history[key] == "won") {
           this.wins++;
         } else if (history[key] == "lost") {
           this.losses++;
+        } else if (history[key] == "draw") {
+          this.draws++;
         }
       });
-      return this.getPercentage(this.wins, this.losses);
+      return this.getPercentage(this.wins, this.losses, this.draws);
     } else {
       return 0;
     }
   }
 
-  getPercentage(wins, losses): number {
-    let total = wins + losses;
+  getPercentage(wins, losses, draws): number {
+    let total = wins + losses + draws;
     return Math.floor(100 / total * wins);
   }
 

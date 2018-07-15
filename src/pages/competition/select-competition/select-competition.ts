@@ -1,11 +1,10 @@
 import { ApiService } from '../../../providers/api-service';
 import { Component } from '@angular/core';
-import { App, NavController, NavParams, Loading, LoadingController, ToastController, ModalController } from 'ionic-angular';
+import { App, NavController, NavParams, Loading, LoadingController, ToastController, ModalController, Platform } from 'ionic-angular';
 import { AddCompetitionPage } from '../add-competition/add-competition';
 import { JoinCompetitionPage } from '../join-competition/join-competition';
 import { Subscription } from 'rxjs/Subscription';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner';
-import { Platform } from 'ionic-angular';
 import { MyApp } from '../../../app/app.component';
 import { UsernamePage } from '../../username/username';
 import { LoginPage } from '../../login/login';
