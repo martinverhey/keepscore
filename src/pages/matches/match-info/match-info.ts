@@ -18,8 +18,10 @@ export class MatchInfoPage {
   public match: IMatchInfo;
   public matchDateAndTime: string = "";
   public teamsAverage = [];
+  public teamsAverageAdjusted = [];
   public winExpectancy = [];
   public admin: string = "";
+  public twovsone: number = 0;
 
   constructor(
     public navCtrl: NavController,
@@ -37,8 +39,11 @@ export class MatchInfoPage {
 
   ionViewDidLoad() {
     let teamNumber: number = 0;
+    let amountOfPlayers = [];
+    this.twovsone = 0;
     if (this.match.teams) {
       Object.keys(this.match.teams).forEach(team => {
+        amountOfPlayers.push(this.match.teams[team].length);
         let teamTotal: number = 0;
         let playerNumber: number = 0;
         Object.keys(this.match.teams[team]).forEach(player => {
@@ -49,9 +54,17 @@ export class MatchInfoPage {
             if (playerNumber > Object.keys(this.match.teams[team]).length - 1) {
               playerNumber = 0;
               teamNumber++;
-              this.teamsAverage.push(teamTotal / Object.keys(this.match.teams[team]).length);
+              amountOfPlayers[0] > amountOfPlayers[1] ? this.twovsone = 1 : amountOfPlayers[0] < amountOfPlayers[1] ? this.twovsone = 2 : this.twovsone = 0;
+              if (team == "team1" && this.twovsone == 1 || team == "team2" && this.twovsone == 2) {
+                console.log("2v1 is true, Team " + this.twovsone + " has the advantage");
+                this.teamsAverage.push(teamTotal / Object.keys(this.match.teams[team]).length);
+                this.teamsAverageAdjusted.push((teamTotal / Object.keys(this.match.teams[team]).length) * 1.25);
+              } else {
+                this.teamsAverage.push(teamTotal / Object.keys(this.match.teams[team]).length);
+                this.teamsAverageAdjusted.push(teamTotal / Object.keys(this.match.teams[team]).length);
+              }
               if (teamNumber > Object.keys(this.match.teams).length - 1) {
-                this.winExpectation(this.teamsAverage);
+                this.winExpectation(this.teamsAverageAdjusted);
               }
             }
           })
@@ -60,16 +73,22 @@ export class MatchInfoPage {
     }
   }
 
-  winExpectation(averageTeamPoints) {
+  winExpectation(averageTeamPointsAdjusted) {
     let strengthDifference = 0;
     let winExpectation = 0;
 
-    strengthDifference = Math.abs(Number(averageTeamPoints[0]) - Number(averageTeamPoints[1]));
+    strengthDifference = Math.abs(Number(averageTeamPointsAdjusted[0]) - Number(averageTeamPointsAdjusted[1]));
     strengthDifference = Math.min(Math.max(strengthDifference, 0), 400);
     winExpectation = -0.000003 * (strengthDifference * strengthDifference) + 0.0023 * strengthDifference + 0.5;
     winExpectation = Math.round(winExpectation * 100);
 
-    averageTeamPoints[0] > averageTeamPoints[1] ? this.winExpectancy.push(winExpectation, 100-winExpectation) : this.winExpectancy.push(100-winExpectation, winExpectation);
+    averageTeamPointsAdjusted[0] > averageTeamPointsAdjusted[1] ? this.winExpectancy.push(winExpectation, 100-winExpectation) : this.winExpectancy.push(100-winExpectation, winExpectation);
+    this.floorNumbers();
+  }
+
+  floorNumbers() {
+    this.teamsAverageAdjusted[0] = Math.floor(this.teamsAverageAdjusted[0]);
+    this.teamsAverageAdjusted[1] = Math.floor(this.teamsAverageAdjusted[1]);
   }
 
   dismissModal() {

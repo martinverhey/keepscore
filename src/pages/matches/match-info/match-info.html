@@ -69,6 +69,28 @@
             <span><p>{{teamsAverage[1]}}</p></span>
           </ion-col>
         </ion-row>
+        <ion-row *ngIf="twovsone != 0">
+          <ion-col text-right align-self-center col-14>
+            <span><p>{{teamsAverageAdjusted[0] - teamsAverage[0]}}</p></span>
+          </ion-col>
+          <ion-col text-center align-self-center col-15>
+            <p>2v1 bonus</p>
+          </ion-col>
+          <ion-col text-left align-self-center col-14>
+            <span><p>{{teamsAverageAdjusted[1] - teamsAverage[1]}}</p></span>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="twovsone != 0">
+          <ion-col text-right align-self-center col-14>
+            <span><p>{{teamsAverageAdjusted[0]}}</p></span>
+          </ion-col>
+          <ion-col text-center align-self-center col-15>
+            <p>total</p>
+          </ion-col>
+          <ion-col text-left align-self-center col-14>
+            <span><p>{{teamsAverageAdjusted[1]}}</p></span>
+          </ion-col>
+        </ion-row>
         <ion-row>
           <ion-col text-right align-self-center col-14>
             <h1>{{winExpectancy[0]}} %</h1>
