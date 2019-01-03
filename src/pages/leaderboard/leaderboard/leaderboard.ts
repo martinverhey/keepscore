@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { Loading, LoadingController, NavController, ModalController } from 'ionic-angular';
 import { ApiService } from '../../../providers/api-service';
 import { AddMatchPage } from '../../matches/add-match/add-match';
-import { LeaderboardInfoPage } from '../leaderboard-info/leaderboard-info';
 import { ProfilePage } from '../../profile/profile';
+import { AddPlayerPage } from '../../player/add-player/add-player';
 
 @Component({
   selector: 'page-leaderboard',
@@ -20,6 +20,7 @@ export class LeaderboardPage implements OnInit {
   public thirdPlace = "#965A38";
   public otherPlaces = "rgba(0,0,0,.1)";
   private loader: Loading;
+  private admin: string = "";
 
   constructor(public navCtrl: NavController, 
               private apiService: ApiService, 
@@ -33,6 +34,12 @@ export class LeaderboardPage implements OnInit {
     this.loadPlayers();
     this.currentCompetitionID = this.apiService.player.competition_selected;
     this.user = this.apiService.player;
+
+    this.apiService.getCompetition(this.apiService.competitionSelected).subscribe(competition => {
+      if (competition.admin) {
+        this.admin = competition.admin;
+      }
+    })
   }
   
   loadPlayers() {
@@ -62,12 +69,12 @@ export class LeaderboardPage implements OnInit {
     this.navCtrl.push(AddMatchPage);
   }
 
-  pushProfile() {
-    this.navCtrl.push(ProfilePage);
+  pushAddPlayer() {
+    this.navCtrl.push(AddPlayerPage, {playerList: this.players});
   }
 
-  pushModal() {
-    let modal = this.modalCtrl.create(LeaderboardInfoPage);
+  showModal(player) {
+    let modal = this.modalCtrl.create(ProfilePage, {player: player, admin: this.admin});
     modal.present();
   }
 

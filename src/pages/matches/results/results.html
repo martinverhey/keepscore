@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Results</ion-title>
+    <ion-title>Matches</ion-title>
     <ion-buttons start>
       <button ion-button icon-only color="light" (click)="pushPage()">
         <ion-icon name="pencil"></ion-icon>
@@ -18,11 +18,11 @@
 
   <ion-card *ngIf="!matches || matches.length == 0" class="info">
     <ion-card-header>
-      Add results
+      Add match
     </ion-card-header>
     <ion-card-content class="info-card">
-        There are no results yet. <br />
-        Add new results by pressing the <ion-icon name="add"></ion-icon> icon.
+        There are no matches yet. <br />
+        Add a new match by pressing the <ion-icon name="add"></ion-icon> icon.
     </ion-card-content>
   </ion-card>
 

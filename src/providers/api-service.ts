@@ -97,8 +97,8 @@ export class ApiService {
     });
   }
 
-  getRankHistory(): Observable<IRankHistory[]> {
-    return this.afDB.list('/ranking/' + this.player.uid + '/' + this.player.competition_selected, ref => ref.limitToLast(7))
+  getRankHistory(uid): Observable<IRankHistory[]> {
+    return this.afDB.list('/ranking/' + uid + '/' + this.player.competition_selected, ref => ref.limitToLast(7))
       .valueChanges()
       .map(res => res as IRankHistory[]);
   }
@@ -124,7 +124,14 @@ export class ApiService {
   }
     
   getUser(uid): Observable<IPlayer> {
-    return this.afDB.object('/users/' + uid).valueChanges().map(res => res as IPlayer);
+    return this.afDB.object('/users/' + uid)
+      .snapshotChanges()
+      .map(user => {
+        return {
+          uid: user.key, ...user.payload.val()
+        };
+      })
+      .map(res => res as IPlayer);
   }
 
   getCompetition(key) {
@@ -145,6 +152,22 @@ export class ApiService {
     })
   }
 
+  saveDummy(dummyUID, uid, currentPlayerUsername) {
+    return this.afDB.list('/users').update(dummyUID, {
+      "created_at": Firebase.database.ServerValue.TIMESTAMP,
+      "owner": {
+        "id": uid,
+        "username": currentPlayerUsername
+      }
+    })
+  }
+
+  createDummy(botUID) {
+    return this.afDB.list('/users').update(botUID, {
+      "dummy": true,
+    })
+  }
+
   saveCompetition(name, uid) {
     return this.afDB.list('/competition/').push({
       "name": name,
@@ -161,8 +184,22 @@ export class ApiService {
     firebase.database().ref('users/' + this.player.uid + '/username').set(this.player.username);
     firebase.database().ref('users/' + this.player.uid + '/competition_selected').set(key);
     firebase.database().ref('users/' + this.player.uid + '/competitions/' + key).set(competitionName);
-    firebase.database().ref('rank/' + key + '/' + this.player.uid + '/username').set(this.player.username);
+    firebase.database().ref('rank/' + key + '/' + this.player.uid + '/').update({username: this.player.username});
     return firebase.database().ref('competition/' + key + '/users/' + this.player.uid).set(this.player.username);
+  }
+
+  addDummyToCompetition(username, dummyUID, key, competitionName) {
+    firebase.database().ref('users/' + dummyUID + '/usernames/' + key).set(username);
+    firebase.database().ref('users/' + dummyUID + '/username').set(username);
+    firebase.database().ref('users/' + dummyUID + '/competition_selected').set(key);
+    firebase.database().ref('users/' + dummyUID + '/competitions/' + key).set(competitionName);
+    firebase.database().ref('rank/' + key + '/' + dummyUID + '/username').set(username);
+    return firebase.database().ref('competition/' + key + '/users/' + dummyUID).set(username);
+  }
+
+  removePlayerFromCompetition(key, uid) {
+    firebase.database().ref('rank/' + key + '/' + uid + '/username/').set('');
+    return firebase.database().ref('rank/' + key + '/' + uid + '/username/').remove();
   }
 
   switchCompetition(key) {

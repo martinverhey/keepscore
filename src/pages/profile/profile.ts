@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, ViewController, AlertController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { ApiService } from '../../providers/api-service';
@@ -23,6 +23,8 @@ export class ProfilePage {
   lineChart: any;
 
   public player: IPlayer;
+  public yourself: IPlayer;
+  public selectedPlayer: any;
   public playerName: string = '';
   public competition: ICompetition;
   public isAnonymous: boolean = false;
@@ -32,16 +34,27 @@ export class ProfilePage {
   public draws: number = 0;
   public history: number[];
   public currentPoints: number = 1000;
+  public admin: string = "";
+  private currentCompetition: string = "";
 
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams,
+    public viewCtrl: ViewController,
+    public alertCtrl: AlertController,
     private afAuth: AngularFireAuth,
     private apiService: ApiService
-  ) { }
+  ) {
+    this.selectedPlayer = this.navParams.get('player');
+    this.admin = this.navParams.get('admin');
+   }
 
   ngOnInit() {
-    this.apiService.getRankHistory()
+    if (!this.selectedPlayer.key) {
+      this.selectedPlayer.key = this.selectedPlayer.uid;
+    }
+    this.currentCompetition = this.apiService.competitionSelected;
+    this.apiService.getRankHistory(this.selectedPlayer.key)
       .do(items => {
         items.sort(function (a,b) {
           return a.timestamp - b.timestamp;
@@ -59,11 +72,15 @@ export class ProfilePage {
         this.renderLine();
       })
 
-    this.player = this.apiService.player;
-    this.playerName = this.player.username;
-    if (this.player.matches && this.player.matches[this.player.competition_selected]) {
-      this.winRate = this.calculateWinRate(this.player);
-    }
+    this.yourself = this.apiService.player;
+
+    this.apiService.getUser(this.selectedPlayer.key).subscribe((player) => {
+      this.player = player;
+      this.playerName = this.selectedPlayer.username;
+      if (this.player.matches && this.player.matches[this.currentCompetition]) {
+        this.winRate = this.calculateWinRate(this.player, this.currentCompetition);
+      }
+    })
 
     this.afAuth.authState.subscribe((authState) => {
       this.isAnonymous = authState.isAnonymous;
@@ -79,7 +96,7 @@ export class ProfilePage {
               {
                   label: "Points",
                   fill: false,
-                  lineTension: 0.1,
+                  lineTension: 0,
                   backgroundColor: "#ff7800",
                   borderColor: "#ff7800",
                   borderCapStyle: 'butt',
@@ -103,10 +120,9 @@ export class ProfilePage {
     });
   }
 
-  calculateWinRate(player): number {
-    let selectedCompetition = this.player.competition_selected;
-    let matches = this.player.matches;
-    let history = matches[selectedCompetition];
+  calculateWinRate(player, currentCompetition): number {
+    let matches = player.matches;
+    let history = matches[currentCompetition];
     
     if (history) {
       this.wins = 0;
@@ -134,5 +150,32 @@ export class ProfilePage {
 
   pushLogin() {
     this.navCtrl.push(LoginPage);
+  }
+
+  dismissModal() {
+    this.viewCtrl.dismiss(this);
+  }
+
+  showConfirm(event, player) {
+    const confirm = this.alertCtrl.create({
+      title: 'Are you sure?',
+      message: 'This player will be completely removed from this competition. He will lose his ranking. This action cannot be undone.',
+      buttons: [
+        {
+          text: 'No',
+          handler: () => {
+
+          }
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            this.apiService.removePlayerFromCompetition(this.currentCompetition, player.uid)
+            this.viewCtrl.dismiss(this);
+          }
+        }
+      ]
+    });
+    confirm.present();
   }
 }

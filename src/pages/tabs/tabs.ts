@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 
 import { LeaderboardPage } from '../leaderboard/leaderboard/leaderboard';
 import { ResultsPage } from '../matches/results/results';
-// import { PlayersPage } from '../players/players';
 import { CompetitionPage } from '../player/competition/competition';
 
 @Component({

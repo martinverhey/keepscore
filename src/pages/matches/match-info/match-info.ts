@@ -56,7 +56,6 @@ export class MatchInfoPage {
               teamNumber++;
               amountOfPlayers[0] > amountOfPlayers[1] ? this.twovsone = 1 : amountOfPlayers[0] < amountOfPlayers[1] ? this.twovsone = 2 : this.twovsone = 0;
               if (team == "team1" && this.twovsone == 1 || team == "team2" && this.twovsone == 2) {
-                console.log("2v1 is true, Team " + this.twovsone + " has the advantage");
                 this.teamsAverage.push(teamTotal / Object.keys(this.match.teams[team]).length);
                 this.teamsAverageAdjusted.push((teamTotal / Object.keys(this.match.teams[team]).length) * 1.25);
               } else {

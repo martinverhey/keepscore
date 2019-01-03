@@ -2,6 +2,7 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+// const request = require("request"); // for Slack integration
 admin.initializeApp();
 
 // Create and Deploy Your First Cloud Functions
@@ -27,6 +28,37 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
 
   var teamRankings = [];
   var teamOnevsTwo = 0;
+
+  // Notify Slack -- Upgrade to Firebase Blaze plan to allow outbound connections. Then try again.
+  // request.post(
+  //   "https://hooks.slack.com/services/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",
+  //   { json: 
+  //     {
+  //     "text": "Martini added a new match",
+  //       "attachments": [
+  //           {
+  //         "title": "<!date^1535563833^{date_short_pretty} at {time}|Jan 1, 2018 at 6:39 AM GMT+1>",
+  //         "fallback": "Today",
+  //               "text": "10 - 0",
+  //               "fields": [
+  //                   {
+  //                       "title": "Team 1",
+  //                       "value": "Bas Helder & Martin",
+  //                       "short": true
+  //                   },
+  //                   {
+  //                       "title": "Team 2",
+  //                       "value": "Niels M & Henry",
+  //                       "short": true
+  //                   }
+  //               ],
+  //               "color": "good"
+  //           }
+  //       ]
+  //     } 
+  //   }
+  // );
+  // console.log("Should send Slack notification now.")
 
   getTeamRanks();
 
@@ -195,7 +227,6 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
 });
 
 exports.removePoints = functions.database.ref('/matches/{competitionid}/{matchid}').onDelete((snap, context) => {
-  // When the data is deleted.
   const competitionid = context.params.competitionid;
   const matchid = context.params.matchid;
   const snapshot = snap;
@@ -230,13 +261,19 @@ exports.removePoints = functions.database.ref('/matches/{competitionid}/{matchid
         return admin.database().ref('/users/' + id).once('value').then(function(snapshot) {
           admin.database().ref('/users/' + id + '/matches/' + match_path).remove()
           admin.database().ref('/ranking/' + id + '/' + match_path).remove()
-          admin.database().ref('/rank/' + competitionid + '/' + id + '/rank').transaction(function(currentRank) {
-            oldRank = currentRank;
-            let newRank = currentRank - change;
-            return newRank;
-          }, function(error, committed, snapshot) {
-            console.log(match_path + " " + id + " " + username + " " + oldRank + " (refund " + change * -1 + ") = ", snapshot.val());
-          });
+          admin.database().ref('/rank/' + competitionid + '/' + id).once("value", snapshot => {
+            if (snapshot.exists()) {
+              admin.database().ref('/rank/' + competitionid + '/' + id + '/rank').transaction(function(currentRank) {
+                oldRank = currentRank;
+                let newRank = currentRank - change;
+                return newRank;
+              }, function(error, committed, snapshot) {
+                console.log(match_path + " " + id + " " + username + " " + oldRank + " (refund " + change * -1 + ") = ", snapshot.val());
+              });  
+            } else {
+              return console.log(competitionid + '/' + id + " doesn't exist anymore");
+            }
+          })
         })
 
       })
@@ -275,12 +312,33 @@ exports.setDefaultRank = functions.database.ref('/rank/{competitionid}/{userid}'
 
 });
 
-exports.removeDefaultRank = functions.database.ref('/rank/{competitionid}/{userid}').onDelete((snap, context) => {
+exports.removeDefaultRank = functions.database.ref('/rank/{competitionid}/{userid}/username').onDelete((snap, context) => {
+  const competitionid = context.params.competitionid;
+  const userid = context.params.userid;
+
   const snapshot = snap;
   const user = snap.val();
-  const path = snapshot._path.replace('/rank/','');
+  let path = snapshot._path.replace('/rank/','');
+  path = path.replace('/username','');
   console.log(path);
-  console.log(path + "/" + snapshot._data + " got deleted.")
-  
+
+  admin.database().ref('/rank/' + path + '/').remove();
+  admin.database().ref('/competition/' + competitionid + '/users/' + userid).remove();
+  admin.database().ref('/users/' + userid + '/usernames/' + competitionid).remove();
+  admin.database().ref('/users/' + userid + '/competitions/' + competitionid).remove();
+
+  console.log(path + "/" + snapshot._data + " got deleted. Server removed his rank.")
+
+  if (userid.length > 28) {
+    admin.database().ref('/users/' + userid + '/').remove();
+    console.log(userid + " (dummy) got deleted completely.");
+  } else {
+    admin.database().ref('/users/' + userid + '/competition_selected/').once('value').then(function(snapshot) {
+      let compselected = snapshot.val();
+      if (compselected == competitionid) {
+        admin.database().ref('/users/' + userid + '/competition_selected/').remove();
+      }
+    })
+  }
   return 0;
 });
