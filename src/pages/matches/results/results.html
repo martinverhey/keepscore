@@ -1,11 +1,16 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Results</ion-title>
-    <ion-buttons end>
+    <ion-title>Matches</ion-title>
+    <ion-buttons start>
       <button ion-button icon-only color="light" (click)="pushPage()">
-        <ion-icon name="add"></ion-icon>
+        <ion-icon name="pencil"></ion-icon>
       </button>
     </ion-buttons>
+    <ion-buttons end>
+        <button ion-button icon-only color="light" (click)="pushPage()">
+          <ion-icon name="add"></ion-icon>
+        </button>
+      </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -13,11 +18,11 @@
 
   <ion-card *ngIf="!matches || matches.length == 0" class="info">
     <ion-card-header>
-      Add results
+      Add match
     </ion-card-header>
     <ion-card-content class="info-card">
-        There are no results yet. <br />
-        Add new results by pressing the <ion-icon name="add"></ion-icon> icon.
+        There are no matches yet. <br />
+        Add a new match by pressing the <ion-icon name="add"></ion-icon> icon.
     </ion-card-content>
   </ion-card>
 
@@ -25,23 +30,23 @@
     <ion-item-divider sticky text-center *virtualHeader="let header">
       {{header}}
     </ion-item-divider>
-    <ion-card *virtualItem="let match">
+    <ion-card *virtualItem="let match" (tap)="showModal(match)">
       <ion-card-content>
         <ion-row>
-          <ion-col text-right align-self-center col-13 [ngClass]="(match.points.team1 > 0) ? 'gainColor' : (match.points.team1 < 0) ? 'loseColor' : 'noChangeColor'">
-            <span *ngIf="match.points.team1 > 0" text-right>▲ {{match.points.team1Positive}}</span><span *ngIf="match.points.team1 < 0" text-right>▼ {{match.points.team1Positive}}</span><span *ngIf="match.points.team1 === 0" text-right>{{match.points.team1Positive}}</span>
+          <ion-col text-right align-self-center col-13 [ngClass]="(match.points.team1 > 0) ? 'gainColor' : (match.points?.team1 < 0) ? 'loseColor' : 'noChangeColor'">
+            <span *ngIf="match.points?.team1 > 0" text-right>▲ {{match.points.team1Positive}}</span><span *ngIf="match.points?.team1 < 0" text-right>▼ {{match.points.team1Positive}}</span><span *ngIf="match.points.team1 === 0" text-right>{{match.points?.team1Positive}}</span>
           </ion-col>
           <ion-col text-right align-self-center col-14>
-            <span *ngFor="let player of match.teams.team1" [class.selected]="this.apiService.uid === player.id"><p>{{player.username}}</p> </span>
+            <span *ngFor="let player of match.teams?.team1" [class.selected]="this.apiService.uid === player.id"><p>{{player.username}}</p> </span>
           </ion-col>
           <ion-col text-center align-self-center col-15>
-            <h1>{{match.scores.team1}} - {{match.scores.team2}}</h1>
+            <h1>{{match.scores?.team1}} - {{match.scores?.team2}}</h1>
           </ion-col>
           <ion-col text-left align-self-center col-14>
-            <span *ngFor="let player of match.teams.team2" [class.selected]="this.apiService.uid === player.id"><p>{{player.username}}</p> </span>
+            <span *ngFor="let player of match.teams?.team2" [class.selected]="this.apiService.uid === player.id"><p>{{player.username}}</p> </span>
           </ion-col>
-          <ion-col text-left align-self-center col-13 [ngClass]="(match.points.team2 > 0) ? 'gainColor' : (match.points.team2 < 0) ? 'loseColor' : 'noChangeColor'">
-            <span *ngIf="match.points.team2 > 0" text-left>▲ {{match.points.team2Positive}}</span><span *ngIf="match.points.team2 < 0" text-left>▼ {{match.points.team2Positive}}</span><span *ngIf="match.points.team2 === 0" text-left>{{match.points.team2Positive}}</span>
+          <ion-col text-left align-self-center col-13 [ngClass]="(match.points.team2 > 0) ? 'gainColor' : (match.points?.team2 < 0) ? 'loseColor' : 'noChangeColor'">
+            <span *ngIf="match.points?.team2 > 0" text-left>▲ {{match.points.team2Positive}}</span><span *ngIf="match.points?.team2 < 0" text-left>▼ {{match.points.team2Positive}}</span><span *ngIf="match.points.team2 === 0" text-left>{{match.points?.team2Positive}}</span>
           </ion-col>
         </ion-row>
       </ion-card-content>

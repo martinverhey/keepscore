@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { App, NavController, NavParams, ModalController } from 'ionic-angular';
-import { ToastController } from 'ionic-angular';
+import { App, NavController, NavParams, ModalController, ToastController } from 'ionic-angular';
 import { ApiService } from '../../../providers/api-service';
 import { TabsPage } from '../../tabs/tabs';
 import { UsernamePage } from '../../username/username';

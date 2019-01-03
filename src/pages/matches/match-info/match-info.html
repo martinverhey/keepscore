@@ -1,0 +1,127 @@
+<!--
+  Generated template for the MatchInfoPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Match details</ion-title>
+    <ion-buttons start>
+        <button ion-button icon-only color="light" (click)="dismissModal()">
+          Close
+        </button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+
+  <ion-card>
+    <ion-card-content>
+      <ion-row>
+        <ion-col text-right align-self-center col-13 [ngClass]="(match.points?.team1 > 0) ? 'gainColor' : (match.points?.team1 < 0) ? 'loseColor' : 'noChangeColor'">
+          <span *ngIf="match.points?.team1 > 0" text-right>▲ {{match.points?.team1Positive}}</span><span *ngIf="match.points?.team1 < 0" text-right>▼ {{match.points?.team1Positive}}</span><span *ngIf="match.points?.team1 === 0" text-right>{{match.points?.team1Positive}}</span>
+        </ion-col>
+        <ion-col text-right align-self-center col-14>
+          <span *ngFor="let player of match.teams?.team1" [class.selected]="this.apiService.uid === player.id"><p>{{player?.username}}</p> </span>
+        </ion-col>
+        <ion-col text-center align-self-center col-15>
+          <h1>{{match.scores?.team1}} - {{match.scores?.team2}}</h1>
+        </ion-col>
+        <ion-col text-left align-self-center col-14>
+          <span *ngFor="let player of match.teams?.team2" [class.selected]="this.apiService.uid === player.id"><p>{{player?.username}}</p> </span>
+        </ion-col>
+        <ion-col text-left align-self-center col-13 [ngClass]="(match.points?.team2 > 0) ? 'gainColor' : (match.points?.team2 < 0) ? 'loseColor' : 'noChangeColor'">
+          <span *ngIf="match.points?.team2 > 0" text-left>▲ {{match.points?.team2Positive}}</span><span *ngIf="match.points?.team2 < 0" text-left>▼ {{match.points?.team2Positive}}</span><span *ngIf="match.points?.team2 === 0" text-left>{{match.points?.team2Positive}}</span>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="info">
+      <ion-card-header>
+        Details
+      </ion-card-header>
+      <ion-card-content>
+        <ion-row>
+          <ion-col text-right align-self-center col-14>
+            <span *ngFor="let player of match.teams?.team1" [class.selected]="this.apiService.uid === player.id"><p>({{player?.username}}) {{player?.rank}}</p> </span>
+          </ion-col>
+          <ion-col text-center align-self-center col-15>
+            <h1> vs </h1>
+          </ion-col>
+          <ion-col text-left align-self-center col-14>
+            <span *ngFor="let player of match.teams?.team2" [class.selected]="this.apiService.uid === player.id"><p>{{player?.rank}} ({{player?.username}})</p> </span>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col text-right align-self-center col-14>
+            <span><p>{{teamsAverage[0]}}</p></span>
+          </ion-col>
+          <ion-col text-center align-self-center col-15>
+            <p>average</p>
+          </ion-col>
+          <ion-col text-left align-self-center col-14>
+            <span><p>{{teamsAverage[1]}}</p></span>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="twovsone != 0">
+          <ion-col text-right align-self-center col-14>
+            <span><p>{{teamsAverageAdjusted[0] - teamsAverage[0]}}</p></span>
+          </ion-col>
+          <ion-col text-center align-self-center col-15>
+            <p>2v1 bonus</p>
+          </ion-col>
+          <ion-col text-left align-self-center col-14>
+            <span><p>{{teamsAverageAdjusted[1] - teamsAverage[1]}}</p></span>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="twovsone != 0">
+          <ion-col text-right align-self-center col-14>
+            <span><p>{{teamsAverageAdjusted[0]}}</p></span>
+          </ion-col>
+          <ion-col text-center align-self-center col-15>
+            <p>total</p>
+          </ion-col>
+          <ion-col text-left align-self-center col-14>
+            <span><p>{{teamsAverageAdjusted[1]}}</p></span>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col text-right align-self-center col-14>
+            <h1>{{winExpectancy[0]}} %</h1>
+          </ion-col>
+          <ion-col text-center align-self-center col-15>
+            <p>win chance</p>
+          </ion-col>
+          <ion-col text-left align-self-center col-14>
+            <h1>{{winExpectancy[1]}} %</h1>
+          </ion-col>
+        </ion-row>
+      </ion-card-content>
+    </ion-card>
+
+  <ion-card class="info">
+      <ion-card-header>
+        Added by
+      </ion-card-header>
+      <ion-card-content class="info info-card">
+        <span [class.selected]="this.apiService.uid === match.owner.id">{{match.owner?.username}}</span> on {{matchDateAndTime}}
+      </ion-card-content>
+  </ion-card>
+
+  <div *ngIf="match.owner?.id === this.apiService.uid || admin === this.apiService.uid" class="action-area">
+      <ion-row>
+        <ion-col text-center>
+          <button ion-button color="danger" round icon-start (tap)="showConfirm($event, match)">
+            <ion-icon name="trash"></ion-icon>
+            Delete
+          </button>
+        </ion-col>
+      </ion-row>
+    </div>
+</ion-content>

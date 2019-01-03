@@ -8,15 +8,21 @@
 
   <ion-navbar>
     <ion-title>Profile</ion-title>
+    <ion-buttons start>
+      <button ion-button icon-only color="light" (click)="dismissModal()">
+        Close
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <p text-center>Hi, {{playerName}}</p>
+  <h2 text-center *ngIf="yourself.uid !== selectedPlayer.uid && yourself.uid !== selectedPlayer.key">{{selectedPlayer.username}}</h2>
+  <h2 text-center *ngIf="yourself.uid === selectedPlayer.uid || yourself.uid === selectedPlayer.key">Hi, {{playerName}}</h2>
 
-  <div class="action-area" text-center>
+  <div class="action-area" text-center *ngIf="yourself.uid === selectedPlayer.uid || yourself.uid === selectedPlayer.key">
     <ion-row>
       <ion-col *ngIf="isAnonymous">
         Register to save your data to an account.
@@ -28,7 +34,7 @@
       </ion-col>
     </ion-row>
   </div>
-
+  
   <ion-card>
     <ion-card-header>
       Statistics
@@ -36,13 +42,15 @@
     <ion-card-content>
       <ion-row>
         <ion-col>Total</ion-col>
-        <ion-col>Wins</ion-col>
-        <ion-col>Losses</ion-col>
+        <ion-col>Win</ion-col>
+        <ion-col>Draw</ion-col>
+        <ion-col>Loss</ion-col>
         <ion-col>Win %</ion-col>
       </ion-row>
       <ion-row>
         <ion-col>{{wins + losses}}</ion-col>
         <ion-col>{{wins}}</ion-col>
+        <ion-col>{{draws}}</ion-col>
         <ion-col>{{losses}}</ion-col>
         <ion-col>{{winRate}} %</ion-col>
       </ion-row>
@@ -57,5 +65,20 @@
       <canvas #lineCanvas></canvas>
     </ion-card-content>
   </ion-card>
+
+  <p text-center *ngIf="this.selectedPlayer.key?.length !== 28 && this.selectedPlayer.uid?.length !== 28"><i>
+    <span text-center *ngIf="yourself.uid !== selectedPlayer.uid && yourself.uid !== selectedPlayer.key">{{selectedPlayer.username}}</span>
+    <span text-center *ngIf="yourself.uid === selectedPlayer.uid || yourself.uid === selectedPlayer.key">{{playerName}}</span> is a manually added player.</i></p>
+
+  <div *ngIf="player?.owner?.id === this.apiService.uid || admin === this.apiService.uid && player?.uid !== admin" class="action-area">
+    <ion-row>
+      <ion-col text-center>
+        <button ion-button color="danger" round icon-start (tap)="showConfirm($event, player)">
+          <ion-icon name="trash"></ion-icon>
+          Delete
+        </button>
+      </ion-col>
+    </ion-row>
+  </div>
   
 </ion-content>

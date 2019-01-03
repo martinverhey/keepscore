@@ -40,6 +40,7 @@
     "cordova-plugin-http": "^1.2.0",
     "cordova-plugin-ionic-webview": "^1.2.1",
     "cordova-plugin-ios-non-exempt-encryption": "^1.0.0",
+    "cordova-plugin-multidex": "^0.1.4",
     "cordova-plugin-nativestorage": "^2.3.1",
     "cordova-plugin-qrscanner": "^2.6.0",
     "cordova-plugin-splashscreen": "^5.0.2",

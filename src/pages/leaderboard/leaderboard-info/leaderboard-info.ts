@@ -27,11 +27,11 @@ export class LeaderboardInfoPage {
 
   ngOnInit() {
     this.currentCompetitionID = this.apiService.player.competition_selected;
-    this.apiService.getCompetitions().take(1).subscribe(competitions => {
-      let competition = competitions.filter(element => element.key == this.currentCompetitionID)[0];
-      competition.usersLength = Object.keys(competition.users).length;
-      this.competition = competition;
-    })
+    // this.apiService.getCompetitions().take(1).subscribe(competitions => {
+    //   let competition = competitions.filter(element => element.key == this.currentCompetitionID)[0];
+    //   competition.usersLength = Object.keys(competition.users).length;
+    //   this.competition = competition;
+    // })
   }
 
   copyToClipboard() {

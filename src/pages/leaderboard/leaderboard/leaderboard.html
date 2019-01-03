@@ -2,12 +2,15 @@
   <ion-navbar>
     <ion-title>Leaderboard</ion-title>
     <ion-buttons start>
-      <button ion-button icon-only color="light" (click)="pushProfile()">
-        <ion-icon name="contact"></ion-icon>
-      </button>
+      <button ion-button icon-only color="light" (click)="showModal(user)">
+          <ion-icon name="contact"></ion-icon>
+        </button>
     </ion-buttons>
     <ion-buttons end>
-      <button ion-button icon-only color="light" (click)="pushPage()">
+      <button *ngIf="admin == user.uid" ion-button icon-only color="light" (click)="pushAddPlayer()">
+        <ion-icon name="person-add"></ion-icon>
+      </button>
+      <button *ngIf="admin !== user.uid" ion-button icon-only color="light" (click)="pushPage()">
         <ion-icon name="add"></ion-icon>
       </button>
     </ion-buttons>
@@ -16,7 +19,7 @@
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let player of players; let i = index">
+    <ion-item *ngFor="let player of players; let i = index" (tap)="showModal(player)">
       <ion-row [class.selected]="user.uid === player.key">
         <ion-col text-left align-self-center col-1>
           <ion-icon name="trophy" item-left *ngIf="i == 0" [style.color]="firstPlace"></ion-icon>
@@ -39,12 +42,22 @@
 
   <ion-card *ngIf="!players || players.length == 1" class="info">
     <ion-card-header>
-      Invite others
+      Invite players
     </ion-card-header>
     <ion-card-content class="info-card">
-        You need others to compete against. <br />
-        Invite friends or colleagues to join the competition. <br /><br />
-        Head over to the <ion-icon name="trophy"></ion-icon> Competition page and let them follow the instructions.
+      You need others to compete against. <br />
+      Invite friends or colleagues to join the competition. <br /><br />
+      Head over to the <ion-icon name="trophy"></ion-icon> Competition page and let them follow the instructions.<br />
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="!players || players.length == 1" class="info">
+    <ion-card-header>
+      Add players manually
+    </ion-card-header>
+    <ion-card-content class="info-card">
+        Use this if you want to fill the competition on your own or 
+        as a replacements for real people that are unable to use the app. <br /><br />
+        Just press the <ion-icon name="person-add"></ion-icon> icon.
     </ion-card-content>
   </ion-card>
 </ion-content>

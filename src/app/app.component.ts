@@ -15,7 +15,8 @@ import { AuthService } from '../providers/auth-service';
 export class MyApp {
   rootPage: any;
 
-  constructor(platform: Platform, 
+  constructor(
+              private platform: Platform, 
               private afAuth: AngularFireAuth, 
               private authService: AuthService,
               private apiService: ApiService,
@@ -32,11 +33,6 @@ export class MyApp {
       .switchMap(auth => this.apiService.getCurrentPlayer(auth.uid))
       .subscribe(currentPlayer => {
         console.log(currentPlayer);
-        // setTimeout(() => {
-        //   setInterval(() => {
-        //     console.log(this.apiService.player.username);
-        //    }, 1000);
-        // }, 1000);
 
         if (!this.rootPage) {
           if (currentPlayer.competition_selected) {
@@ -51,6 +47,9 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
+      if (this.platform.is('android')) {
+        this.statusBar.styleLightContent();
+      }
       splashScreen.hide();
 
       // window.fabric.Crashlytics.addLog("about to send a crash for testing!");

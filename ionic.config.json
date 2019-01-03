@@ -1,6 +1,5 @@
 {
   "name": "competition",
-  "app_id": "",
   "integrations": {
     "cordova": {}
   },

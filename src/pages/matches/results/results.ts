@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { Loading, LoadingController, NavController } from 'ionic-angular';
+import { Loading, LoadingController, NavController, ModalController } from 'ionic-angular';
 import { ApiService } from '../../../providers/api-service';
 import { AddMatchPage } from '../add-match/add-match';
-import { IPlayer } from '../../../models/player.models';
+import { MatchInfoPage } from '../match-info/match-info';
 
 @Component({
   selector: 'page-results',
@@ -13,9 +13,11 @@ export class ResultsPage {
   private firstDate: string;
   private loader: Loading;
   private matchSub: any;
+  private admin: string = "";
 
   constructor (
     public navCtrl: NavController, 
+    public modalCtrl: ModalController,
     private apiService: ApiService,
     private loadingCtrl: LoadingController,
   ) { }
@@ -43,6 +45,11 @@ export class ResultsPage {
       })
       this.loader.dismiss();
     });
+    this.apiService.getCompetition(this.apiService.competitionSelected).subscribe(competition => {
+      if (competition.admin) {
+        this.admin = competition.admin;
+      }
+    })
   }
   
   ngOnDestroy() {
@@ -52,6 +59,10 @@ export class ResultsPage {
   }
   pushPage() {
     this.navCtrl.push(AddMatchPage);
+  }
+
+  showModal(match) {
+    this.presentModal(match);
   }
 
   myHeaderFn(record, recordIndex, records) {
@@ -68,6 +79,16 @@ export class ResultsPage {
 
   virtualTrack (index, match) {
     return index + "" + match.created_at;
+  }
+
+  presentModal(match) {
+    const modal = this.modalCtrl.create(MatchInfoPage, {match: match, admin: this.admin});
+    modal.onDidDismiss(data => {
+      if (data != null) {
+        
+      }
+    })
+    modal.present();
   }
 
   presentLoading() {
