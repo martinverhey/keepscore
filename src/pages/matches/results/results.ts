@@ -83,11 +83,6 @@ export class ResultsPage {
 
   presentModal(match) {
     const modal = this.modalCtrl.create(MatchInfoPage, {match: match, admin: this.admin});
-    modal.onDidDismiss(data => {
-      if (data != null) {
-        
-      }
-    })
     modal.present();
   }
 

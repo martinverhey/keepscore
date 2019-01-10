@@ -29,37 +29,6 @@ exports.calculatePoints = functions.database.ref('/matches/{competitionid}/{matc
   var teamRankings = [];
   var teamOnevsTwo = 0;
 
-  // Notify Slack -- Upgrade to Firebase Blaze plan to allow outbound connections. Then try again.
-  // request.post(
-  //   "https://hooks.slack.com/services/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",
-  //   { json: 
-  //     {
-  //     "text": "Martini added a new match",
-  //       "attachments": [
-  //           {
-  //         "title": "<!date^1535563833^{date_short_pretty} at {time}|Jan 1, 2018 at 6:39 AM GMT+1>",
-  //         "fallback": "Today",
-  //               "text": "10 - 0",
-  //               "fields": [
-  //                   {
-  //                       "title": "Team 1",
-  //                       "value": "Bas Helder & Martin",
-  //                       "short": true
-  //                   },
-  //                   {
-  //                       "title": "Team 2",
-  //                       "value": "Niels M & Henry",
-  //                       "short": true
-  //                   }
-  //               ],
-  //               "color": "good"
-  //           }
-  //       ]
-  //     } 
-  //   }
-  // );
-  // console.log("Should send Slack notification now.")
-
   getTeamRanks();
 
   function getTeamRanks() {

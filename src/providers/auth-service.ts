@@ -38,10 +38,8 @@ export class AuthService {
 
   anonymousLogin() {
     return this.afAuth.auth.signInAnonymously().then((response) => {
-      // console.log(response);
 
       this.apiService.saveUser(response.uid).then((response) => {
-        // console.log("Succesfully saved");
       });
     })
       .catch(error => this.presentToast(error.message));

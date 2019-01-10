@@ -72,48 +72,6 @@ export class AddPlayerPage {
       })
       this.popPage();
     }
-
-    // if (this.username.length <= 10) {
-    //   this.presentToast('Player was added successfully');
-    //   this.popPage();
-    // } else if (this.username.length > 10) {
-    //   this.presentToast('Only 10 characters allowed');
-    // }
-
-    // this.apiService.addPlayerToCompetition(item.key, this.name).then(() => {
-    //   this.presentToast('Successfully created: ' + this.name);
-    // });
-      // setTimeout(() => {
-      //   const root = this.app.getRootNav();
-      //   root.setRoot(MyApp);
-      // }, 500);
-
-
-    // ngOnInit() {
-    //   this.players = this.competition.users;
-    //   Object.keys(this.players).forEach(player => {
-    //     this.playerList.push(this.players[player]);
-    //   })
-    //   this.playerList.sort()
-    // }
-  
-    // saveUsername() {
-    //   this.mistakeMade = false;
-    //   Object.keys(this.players).forEach(player => {
-    //     let value = this.players[player];
-    //     if (value.trim().toLowerCase() === this.username.trim().toLowerCase()) {
-    //       this.presentToast(value + ' already exists. Choose a different name.');
-    //       this.mistakeMade = true;
-    //     }
-    //   })
-    //   if (!this.mistakeMade) {
-    //     this.apiService.player[this.competition.key] = this.username;
-    //     this.apiService.player.username = this.username;
-    //     this.viewCtrl.dismiss(this.username);
-    //   }
-    // }
-  
-
   }
 
   presentToast(text:string) {

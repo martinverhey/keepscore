@@ -51,9 +51,6 @@ export class MyApp {
         this.statusBar.styleLightContent();
       }
       splashScreen.hide();
-
-      // window.fabric.Crashlytics.addLog("about to send a crash for testing!");
-      // window.fabric.Crashlytics.sendCrash();
       
     });
   }
