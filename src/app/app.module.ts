@@ -37,20 +37,20 @@ import { MatchInfoPage } from '../pages/matches/match-info/match-info';
 // AF2 Settings
 export const firebaseConfig = {
   // PRODUCTION
-  // apiKey: "AIzaSyDAFwPnqLjlsQyBY7_O4T_cT46q3jndSfA",
-  // authDomain: "keepscore-c4562.firebaseapp.com",
-  // databaseURL: "https://keepscore-c4562.firebaseio.com",
-  // projectId: "keepscore-c4562",
-  // storageBucket: "keepscore-c4562.appspot.com",
-  // messagingSenderId: "306614329685"
+  apiKey: "AIzaSyDAFwPnqLjlsQyBY7_O4T_cT46q3jndSfA",
+  authDomain: "keepscore-c4562.firebaseapp.com",
+  databaseURL: "https://keepscore-c4562.firebaseio.com",
+  projectId: "keepscore-c4562",
+  storageBucket: "keepscore-c4562.appspot.com",
+  messagingSenderId: "306614329685"
 
   // DEVELOPMENT
-  apiKey: "AIzaSyB8noOfNh0bHh7EBwWIHW7h1HCH9BhDKH8",
-  authDomain: "keepscoredev.firebaseapp.com",
-  databaseURL: "https://keepscoredev.firebaseio.com",
-  projectId: "keepscoredev",
-  storageBucket: "keepscoredev.appspot.com",
-  messagingSenderId: "673709134237"
+  // apiKey: "AIzaSyB8noOfNh0bHh7EBwWIHW7h1HCH9BhDKH8",
+  // authDomain: "keepscoredev.firebaseapp.com",
+  // databaseURL: "https://keepscoredev.firebaseio.com",
+  // projectId: "keepscoredev",
+  // storageBucket: "keepscoredev.appspot.com",
+  // messagingSenderId: "673709134237"
 };
 
 @NgModule({
