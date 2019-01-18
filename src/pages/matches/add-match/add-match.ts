@@ -124,7 +124,7 @@ export class AddMatchPage implements OnInit {
   }
 
   getUsers() {
-    this.userSub = this.apiService.getPlayersInCompetition().subscribe(players => {
+    this.userSub = this.apiService.getPlayersInCompetition().take(1).subscribe(players => {
       for (let player of players) {
         player.checkedTeam1 = false;
         player.checkedTeam2 = false;
